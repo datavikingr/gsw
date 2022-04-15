@@ -9,14 +9,15 @@ function help() {
 	echo "  -r <filepath to repository>"
 	echo
 	echo "Intended usage is screen/tmux scenario, to keep track of live changes to your local repo."
+	echo "However, new windows are also viable, especially working in GUI editors."
 }
 
 function mainloop() {
 	clear
 	echo "-------------------------------------------------------------------------------"
-	echo "|    Welcome to the top for git status, kinda."
-	echo "|    >You're currently working in '$(pwd)'."
-	echo "|    >>Your branch is: '$(git branch)'."
+	echo "|"
+	echo "|      You're currently working in '$(pwd)'."
+	echo "|      Your branch is: '$(git branch)'."
 	echo "|"
 	echo "|    Press y to commit, Ctrl+C to exit."
 	echo "-------------------------------------------------------------------------------"
@@ -35,7 +36,11 @@ function mainloop() {
 		git add *
 		read -p "What's your commit message? " varmsg
 		git commit -m "$varmsg"
-		read -p "Remote shortname? " varremote
+		read -p "Shortname? Defaults to origin. " varremote
+		if [ -z "$varremote" ]; then
+			varremote = "origin"
+			echo
+		fi
 		read -p "Branch? " varbranch
 		git push "$varremote" "$varbranch"
 		echo
@@ -57,34 +62,51 @@ do
     esac
 done
 
-# Cleanup
+# Welcome
 clear
-# Repo check; defaults to pwd
+echo "Welcome to gsw - git status watch, and even lazier person's lazygit."
+echo
+
+# Initialization cleanup time
+# Repo var check; defaults to pwd
 if [ -z "$repository" ]; then
 	repository=$(pwd)
+	echo "No repository given in flags, defaulting to working directory."
 fi
-#transport and then Pull check
+
+# Transport; .git check
 cd $repository
+varisgit=$(find . -name .git)
+if [ -z "$varisgit" ]; then
+	echo "No git repository found. Exiting."
+	exit 2
+fi
 echo
+
+# Pull check
 read -p "Would you like to pull first? " varpull
 if [[ "$varpull" == "y" ]]; then
 	cd $repository
-	read -p "Remote shortname? " varremote
+	read -p "Remote shortname? Defaults to origin" varremote
+	if [ -z "$varremote" ]; then
+		varremote = "origin"
+		echo
+	fi
 	read -p "Branch? " varbranch
 	git pull "$varremote" "$varbranch"
 else 
 	echo	
 fi
-# Poll time check
+
+# Poll-time check
 if [ -z "$polltime" ]; then
 	echo "Another quick Q:"
-	read -p "How frequently would like to poll? Default will be set to 30 seconds " polltime 
-fi
-# Default check
-if [ -z "$polltime" ]; then
-	echo "Ah, the classics."
-	polltime = "30s"
-	echo
+	read -p "How frequently would like to poll git status? Default will be set to 30 seconds: " polltime
+	if [ -z "$polltime" ]; then
+		echo "Ah, the classics."
+		polltime = "30s"
+		echo
+	fi
 fi
 
 # Main body, a simple and effective inifinite while loop.
