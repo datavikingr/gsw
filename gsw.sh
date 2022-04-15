@@ -16,10 +16,11 @@ function mainloop() {
 	clear
 	echo "-------------------------------------------------------------------------------"
 	echo "|"
-	echo "|      You're currently working in '$(pwd)'."
-	echo "|      Your branch is: '$(git branch)'."
+	echo "|    You're currently working in '$(pwd)'."
+	echo "|    Your branch is: '$(git branch)'."
 	echo "|"
 	echo "|    Press y to commit, Ctrl+C to exit."
+	echo "|"
 	echo "-------------------------------------------------------------------------------"
 	echo
 	echo "Logs:"
@@ -33,6 +34,7 @@ function mainloop() {
 	read -t $polltime -n 1 -p "Would you like to commit? [y]" varcommit
 	if [ "$varcommit" = "y" ]; then
 		cd $repository
+		echo
 		git add *
 		read -p "What's your commit message? " varmsg
 		git commit -m "$varmsg"
@@ -76,7 +78,11 @@ fi
 
 # Transport; .git check
 cd $repository
-varisgit=$(find . -name .git)
+
+### This isn't triggering correctly
+### Don;t forget to update installed version - copy/paste style.
+
+varisgit=$(find . -maxdepth 1 -type d -name ".git")
 if [ -z "$varisgit" ]; then
 	echo "No git repository found. Exiting."
 	exit 2
@@ -89,7 +95,7 @@ if [[ "$varpull" == "y" ]]; then
 	cd $repository
 	read -p "Remote shortname? Defaults to origin" varremote
 	if [ -z "$varremote" ]; then
-		varremote = "origin"
+		varremote="origin"
 		echo
 	fi
 	read -p "Branch? " varbranch
@@ -104,7 +110,7 @@ if [ -z "$polltime" ]; then
 	read -p "How frequently would like to poll git status? Default will be set to 30 seconds: " polltime
 	if [ -z "$polltime" ]; then
 		echo "Ah, the classics."
-		polltime = "30s"
+		polltime="30s"
 		echo
 	fi
 fi
