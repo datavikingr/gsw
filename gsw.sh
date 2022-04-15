@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #simple bash script for polling git status updates with a shitty UI; run this in tmux or terminal that can split; even another window, if you're into that.
 
 ### Function defintions ###
@@ -89,21 +91,6 @@ if [ -z "$varisgit" ]; then
 fi
 echo
 
-# Pull check
-read -p "Would you like to pull first? " varpull
-if [[ "$varpull" == "y" ]]; then
-	cd $repository
-	read -p "Remote shortname? Defaults to origin" varremote
-	if [ -z "$varremote" ]; then
-		varremote="origin"
-		echo
-	fi
-	read -p "Branch? " varbranch
-	git pull "$varremote" "$varbranch"
-else 
-	echo	
-fi
-
 # Poll-time check
 if [ -z "$polltime" ]; then
 	echo "Another quick Q:"
@@ -113,6 +100,21 @@ if [ -z "$polltime" ]; then
 		polltime="30s"
 		echo
 	fi
+fi
+
+# Pull check
+read -p "Would you like to pull first? " varpull
+if [[ "$varpull" == "y" ]]; then
+	cd $repository
+	read -p "Remote shortname? Defaults to origin: " varremote
+	if [ -z "$varremote" ]; then
+		varremote="origin"
+		echo
+	fi
+	read -p "Branch? " varbranch
+	git pull "$varremote" "$varbranch"
+else 
+	echo	
 fi
 
 # Main body, a simple and effective inifinite while loop.
