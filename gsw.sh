@@ -4,21 +4,21 @@
 
 ### Function defintions ###
 function help() {
-	echo "Git Status Poller"
+	echo "gsw - Git Status Watch(er)"
 	echo 
-	echo "usage: gitstatus.sh [-t X] [-r filepath]"	
-	echo "  -t <int> time; 30s, 5m, 2h, etc."
+	echo "usage: gsw [-t X] [-r filepath]"	
+	echo "  -t <int> time in seconds"
 	echo "  -r <filepath to repository>"
 	echo
-	echo "Intended usage is screen/tmux scenario, to keep track of live changes to your local repo."
-	echo "However, new windows are also viable, especially working in GUI editors."
+	echo "Intended usage is screen/tmux scenario, to keep live track of changes to your local repo."
+	echo "However, new windows are also viable, especially when working in GUI editors or DEs in general."
 }
 
 function mainloop() {
 	clear
 	echo "-------------------------------------------------------------------------------"
 	echo "|"
-	echo "|    You're currently working in '$(pwd)'."
+	echo "|    You're currently watching '$(pwd)'."
 	echo "|    Your branch is: '$(git branch)'."
 	echo "|"
 	echo "|    Press y to commit, Ctrl+C to exit."
@@ -40,15 +40,19 @@ function mainloop() {
 		git add *
 		read -p "What's your commit message? " varmsg
 		git commit -m "$varmsg"
-		read -p "Shortname? Defaults to origin. " varremote
+		read -p "Shortname? Defaults to origin: " varremote
 		if [ -z "$varremote" ]; then
 			varremote = "origin"
 			echo
 		fi
-		read -p "Branch? " varbranch
+		read -p "Branch? Defaults to main: " varbranch
+		if [ -z "$varbranch" ]; then
+			varbranch="main"
+			echo
+		fi
 		git push "$varremote" "$varbranch"
 		echo
-		echo "Thanks for coding with us. "
+		echo "Thanks for coding with us. Hope it helped!"
 		exit 1
 	else 
 		echo ""
@@ -68,42 +72,32 @@ done
 
 # Welcome
 clear
-echo "Welcome to gsw - git status watch, and even lazier person's lazygit."
+echo "Welcome to gsw - git status watch, an even lazier person's lazygit."
 echo
 
 # Initialization cleanup time
 # Repo var check; defaults to pwd
 if [ -z "$repository" ]; then
 	repository=$(pwd)
-	echo "No repository given in flags, defaulting to working directory."
 fi
 
 # Transport; .git check
 cd $repository
 
-### This isn't triggering correctly
-### Don;t forget to update installed version - copy/paste style.
-
-varisgit=$(find . -maxdepth 1 -type d -name ".git")
+varisgit=$(find . -maxdepth 1 -mindepth 1 -type d -name ".git")
 if [ -z "$varisgit" ]; then
-	echo "No git repository found. Exiting."
+	echo "No git repository found in the current directory. Exiting."
 	exit 2
 fi
 echo
 
 # Poll-time check
 if [ -z "$polltime" ]; then
-	echo "Another quick Q:"
-	read -p "How frequently would like to poll git status? Default will be set to 30 seconds: " polltime
-	if [ -z "$polltime" ]; then
-		echo "Ah, the classics."
-		polltime="30s"
-		echo
-	fi
+	polltime="30"
 fi
 
 # Pull check
-read -p "Would you like to pull first? " varpull
+read -p "Would you like to pull before getting started? " varpull
 if [[ "$varpull" == "y" ]]; then
 	cd $repository
 	read -p "Remote shortname? Defaults to origin: " varremote
@@ -111,7 +105,11 @@ if [[ "$varpull" == "y" ]]; then
 		varremote="origin"
 		echo
 	fi
-	read -p "Branch? " varbranch
+	read -p "Branch? Defaults to main: " varbranch
+	if [ -z "$varbranch" ]; then
+		varbranch="main"
+		echo
+	fi
 	git pull "$varremote" "$varbranch"
 else 
 	echo	
