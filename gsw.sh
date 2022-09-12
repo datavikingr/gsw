@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#simple bash script for polling git status updates with a shitty UI; run this in tmux or terminal that can split; even another window, if you're into that.
+#simple bash script for polling git status updates with a janky UI; run this in tmux or terminal that can split; even another window, if you're into that.
 
 ### Function defintions ###
 function help() {
