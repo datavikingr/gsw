@@ -42,7 +42,7 @@ function mainloop() {
 		git commit -m "$varmsg"
 		read -p "Shortname? Defaults to origin: " varremote
 		if [ -z "$varremote" ]; then
-			varremote = "origin"
+			varremote="origin"
 			echo
 		fi
 		read -p "Branch? Defaults to main: " varbranch
