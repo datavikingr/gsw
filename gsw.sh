@@ -51,9 +51,22 @@ function mainloop() {
 			echo
 		fi
 		git push "$varremote" "$varbranch"
-		echo
-		echo "Thanks for coding with us. Hope it helped!"
-		exit 1
+		# OLD; Replacing with exit-prompt.
+		# echo
+		# echo "Thanks for coding with us. Hope it helped!"
+		# exit 1
+		read -p "Would you like to exit [e] or continue [anything else]?" varcont
+		if [ "$varcont" = "e" ]; then
+			echo
+			echo "Thanks for coding with us! Hope it helped!"
+			exit 1
+		else
+			echo
+			echo "Sweet! Let's keep going!!"
+			sleep 5
+			clear
+			mainloop
+		fi
 	else 
 		echo ""
 	fi
