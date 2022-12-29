@@ -7,7 +7,7 @@ function help() {
 	echo "gsw - Git Status Watch(er)"
 	echo 
 	echo "usage: gsw [-t X] [-r filepath]"	
-	echo "  -t <int> time in seconds"
+	echo "  -t <int> time in seconds (default 10 seconds)"
 	echo "  -r <filepath to repository>"
 	echo
 	echo "Intended usage is screen/tmux scenario, to keep live track of changes to your local repo."
@@ -93,7 +93,7 @@ echo
 
 # Poll-time check
 if [ -z "$polltime" ]; then
-	polltime="30"
+	polltime="10"
 fi
 
 # Pull check
