@@ -10,3 +10,6 @@ Think of it as top for git repos, or even lazygit - but even lazier.
 -status, logs, working directory, branch
 -git add ., commit, push, and pull
 -custom polling time
+
+![gsw-screenshot](https://user-images.githubusercontent.com/43792895/209977281-f386fdd1-0b59-45af-977c-ca597a3f92c4.png)
+
