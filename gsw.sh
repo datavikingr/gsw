@@ -19,6 +19,8 @@ function help() {
 function mainloop() {
 	clear
 	# Build (strong air quote) UI
+	echo "Git Status Watch (gsw) - an even lazier person's lazygit."
+	echo
 	echo "-------------------------------------------------------------------------------"
 	echo "|"
 	echo "|    You're currently watching '$(pwd)'."
