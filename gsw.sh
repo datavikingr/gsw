@@ -33,11 +33,11 @@ function mainloop() {
 	echo "-------------------------------------------------------------------------------"
 	git status
 	echo
-	read -t $polltime -n 1 -p "Would you like to commit? [y]" varcommit
+	read -t $polltime -n 1 -p "Would you like to add and commit? [y] " varcommit
 	if [ "$varcommit" = "y" ]; then
 		cd $repository
 		echo
-		git add *
+		git add .
 		read -p "What's your commit message? " varmsg
 		git commit -m "$varmsg"
 		read -p "Shortname? Defaults to origin: " varremote
@@ -55,7 +55,7 @@ function mainloop() {
 		# echo
 		# echo "Thanks for coding with us. Hope it helped!"
 		# exit 1
-		read -p "Would you like to exit [e] or continue [anything else]?" varcont
+		read -p "Would you like to exit [e] or continue [anything else]? " varcont
 		if [ "$varcont" = "e" ]; then
 			echo
 			echo "Thanks for coding with us! Hope it helped!"
