@@ -1,6 +1,7 @@
 #!/bin/bash
-
-#simple bash script for polling git status updates with a janky UI; run this in tmux or terminal that can split; even another window, if you're into that.
+# written by Alex Haskins, 2022, under the MIT License. Go nuts with this code, fam.
+# simple bash script for polling git status updates with a janky UI; 
+# run this in tmux/screen, a splitting terminal, Dolphin/Kate's terminal, or another window.
 
 ### Function defintions ###
 function help() {
@@ -14,8 +15,10 @@ function help() {
 	echo "However, new windows are also viable, especially when working in GUI editors or DEs in general."
 }
 
+### Main Body of the status-poller ###
 function mainloop() {
 	clear
+	# Build (strong air quote) UI
 	echo "-------------------------------------------------------------------------------"
 	echo "|"
 	echo "|    You're currently watching '$(pwd)'."
@@ -33,13 +36,17 @@ function mainloop() {
 	echo "-------------------------------------------------------------------------------"
 	git status
 	echo
+	# That was the output, now for the input portion
 	read -t $polltime -n 1 -p "Would you like to add and commit? [y] " varcommit
 	if [ "$varcommit" = "y" ]; then
+	# Then we git add, git commit, damn
 		cd $repository
 		echo
+		# . grabs recursively & * ignores .hiddenfile; therefore, git add .
 		git add .
 		read -p "What's your commit message? " varmsg
 		git commit -m "$varmsg"
+		# sane defaults, origin & main, but allows old default ("master") or other remotes
 		read -p "Shortname? Defaults to origin: " varremote
 		if [ -z "$varremote" ]; then
 			varremote="origin"
@@ -51,10 +58,6 @@ function mainloop() {
 			echo
 		fi
 		git push "$varremote" "$varbranch"
-		# OLD; Replacing with exit-prompt.
-		# echo
-		# echo "Thanks for coding with us. Hope it helped!"
-		# exit 1
 		read -p "Would you like to exit [e] or continue [anything else]? " varcont
 		if [ "$varcont" = "e" ]; then
 			echo
@@ -68,7 +71,8 @@ function mainloop() {
 			mainloop
 		fi
 	else 
-		echo ""
+		# Do nothing, we don't care. y is our only trigger
+		echo 
 	fi
 }
 
@@ -87,6 +91,7 @@ done
 clear
 echo "Welcome to gsw - git status watch, an even lazier person's lazygit."
 echo
+sleep 2
 
 # Initialization cleanup time
 # Repo var check; defaults to pwd
@@ -104,7 +109,8 @@ if [ -z "$varisgit" ]; then
 fi
 echo
 
-# Poll-time check
+# Poll-time check; default 10 seconds. 
+# Old versions used 30s was too long, caused confusion
 if [ -z "$polltime" ]; then
 	polltime="10"
 fi
@@ -124,11 +130,12 @@ if [[ "$varpull" == "y" ]]; then
 		echo
 	fi
 	git pull "$varremote" "$varbranch"
-else 
+else
+	# Assume no pull, let's move on.
 	echo	
 fi
 
-# Main body, a simple and effective inifinite while loop.
+# Main body, a simple and effective inifinite while loop. It's always true, so it always loops!
 while :
 do
 	mainloop	

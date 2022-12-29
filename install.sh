@@ -13,7 +13,7 @@ if [ "$varinstall" = "y" ]; then
 	echo "Installation complete! Thanks for picking gsw!"
 	exit 1
 else
-	cp ./gsw.sh ~/.local/bin
+	cp ./gsw.sh ~/.local/bin/gsw
 	echo
 	echo "Make sure ~/.local/bin is in your $PATH variable."
 	echo "You can verify this in your .bashrc, .zshrc, etc. after install."
