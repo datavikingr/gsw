@@ -3,7 +3,7 @@
 # simple bash HUD for polling git status/logs, automating the basic aspects of the git workflow
 
 function gswverinfo() {
-    echo "v 1.2.1"
+    echo "v 1.2.2"
     exit 0
 }
 
@@ -101,13 +101,16 @@ function mainloop() {
 		git push "$varremote" "$varbranch"
 		exitpoll
     elif [ "$varcommit" = "r" ]; then
+        echo
         read -p "What file would you like to remove? " vargitrm
         git rm "$vargitrm"
     elif [ "$varcommit" = "i" ]; then
         cd $repository # double-check we're in the right place for safety purposes
+        echo
         read -p "What file would you like to add to .gitignore? " varignore
         echo "$varignore" >> .gitignore
     elif [ "$varcommit" = "x" ]; then
+        echo
         echo "Thanks for coding with us! Hope it helped!"
         exit 0
 	else
