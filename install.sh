@@ -2,22 +2,42 @@
 
 # install script for git status watch; the even lazier person's lazygit
 
-clear
-echo "Default install path is ~/.local/bin, but you can install globally to /usr/bin instead, if you prefer."
-echo
-read -p "Would you like to install gsw globally [y]? " varinstall
+function installgsw() {
+    clear
+    echo "Default install path is ~/.local/bin, but you can install globally to /usr/bin instead, if you prefer."
+    echo
+    read -p "Would you like to install gsw globally [y]? " varinstall
 
-if [ "$varinstall" = "y" ]; then
-	sudo cp ./gsw.sh /usr/bin/gsw
-	echo
-	echo "Installation complete! Thanks for picking gsw!"
-	exit 1
-else
-	cp ./gsw.sh ~/.local/bin/gsw
-	echo
-	echo "Make sure ~/.local/bin is in your $PATH variable."
-	echo "You can verify this in your .bashrc, .zshrc, etc. after install."
-	echo
-	echo "That said, install is complete! Thanks for picking gsw!"
-	exit 1
-fi
+    if [ "$varinstall" = "y" ]; then
+        sudo cp ./gsw.sh /usr/bin/gsw
+        echo
+        echo "Global installation complete! Thanks for picking gsw!"
+        exit 0
+    else
+        mkdir -p ~/.local/bin/
+        cp ./gsw.sh ~/.local/bin/gsw
+        echo "Make sure ~/.local/bin is in your \$PATH variable. Local install is complete! Thanks for picking gsw!"
+        exit 0
+    fi
+}
+
+function updatecheck() {
+    varalready=$(which gsw)
+    if [ -z "$varalready" ]; then
+        installgsw
+    else
+        gswinstallpath=$(echo $varalready | sed 's/gsw//')
+        if [ "$gswinstallpath" = "/usr/bin/" ]; then
+            sudo rm $varalready
+            sudo cp ./gsw.sh /usr/bin/gsw
+        else
+            rm $varalready
+            cp ./gsw.sh ~/.local/bin/gsw
+        fi
+        echo
+        echo "Update complete! Thanks for staying with us!"
+        exit 0
+    fi
+}
+
+updatecheck

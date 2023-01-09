@@ -2,15 +2,21 @@
 # gsw - ᚫᚻ - Alex Haskins, 2023, under the MIT License. Go nuts with this code, fam. 
 # simple bash HUD for polling git status/logs, automating the basic aspects of the git workflow
 
-function help() {
+function gswverinfo() {
+    echo "v 1.2.1"
+    exit 0
+}
+
+function helpme() {
 	echo "gsw - Git Status Watch(er)"
 	echo 
-	echo "usage: gsw [-t X] [-r filepath]"	
+	echo "usage: gsw [-t X] [-r filepath] [-v]"	
 	echo "  -t <int> time in seconds (default 10 seconds)"
 	echo "  -r <filepath> repository directory, relative or absolute are fine (default cwd)"
+	echo "  -v (shows version)"
 	echo
 	echo "Keep track of changes to your repo - live, local, and latebreaking."
-	exit 1
+	exit 0
 }
 
 function exitpoll() {
@@ -18,7 +24,7 @@ function exitpoll() {
     echo
     if [ "$varcont" = "e" ]; then
         echo "Thanks for coding with us! Hope it helped!"
-        exit 1
+        exit 0
     else
         echo "Let's go!!"
         sleep 2
@@ -36,7 +42,7 @@ function initsequence() {
     varisgit=$(find . -maxdepth 1 -mindepth 1 -type d -name ".git") #find the .git folder, proving its a repo.
     if [ -z "$varisgit" ]; then
         echo "No git repository found in the current/specified directory. Try again."
-        exit 2
+        exit 1
     fi
     if [ -z "$polltime" ]; then # Poll-time check; default 10 seconds. Old versions used 30s - was too long & caused confusion
         polltime="10"
@@ -103,7 +109,7 @@ function mainloop() {
         echo "$varignore" >> .gitignore
     elif [ "$varcommit" = "x" ]; then
         echo "Thanks for coding with us! Hope it helped!"
-        exit 1
+        exit 0
 	else
         clear
 	fi
@@ -113,12 +119,14 @@ function mainloop() {
 ## START - hilariously late in the script to begin, but required definitions are required. ##
 #############################################################################################
 
-while getopts t:r:h: flag
+
+while getopts "hvtr:" flag
 do
     case "${flag}" in
+        h) helpme ;;
+        v) gswverinfo ;;
         t) polltime=${OPTARG};; 
         r) repository=${OPTARG};;
-        h) help;;
     esac
 done
 
