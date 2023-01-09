@@ -62,11 +62,9 @@ function initsequence() {
 
 ### Main Body of the status-poller
 function mainloop() {
-	clear
 	# Build (strong air quote) UI
 	echo "Git Status Watch (gsw) - an even lazier person's lazygit."
 	echo "-------------------------------------------------------------"
-	echo
 	echo "* You're currently watching $(pwd) $(git branch)."
 	echo
 	echo "Logs:"
@@ -107,8 +105,7 @@ function mainloop() {
         echo "Thanks for coding with us! Hope it helped!"
         exit 1
 	else
-        echo "Not a valid option. Try again."
-        sleep 1
+        clear
 	fi
 }
 
@@ -129,6 +126,7 @@ clear
 echo "Welcome to gsw - git status watch, an even lazier person's lazygit."
 sleep 2
 initsequence
+clear
 while : # It's always true, so it always loops!
 do
 	mainloop
