@@ -26,6 +26,11 @@ function updatecheck() {
     if [ -z "$varalready" ]; then
         installgsw
     else
+        varversion=$(gsw -v)
+        if [ "$varversion" = "v 1.2.3" ]; then
+            echo "You're already up to date!"
+            exit 0
+        fi
         gswinstallpath=$(echo $varalready | sed 's/gsw//')
         if [ "$gswinstallpath" = "/usr/bin/" ]; then
             sudo rm $varalready

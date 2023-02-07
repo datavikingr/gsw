@@ -3,8 +3,50 @@
 # simple bash HUD for polling git status/logs, automating the basic aspects of the git workflow
 
 function gswverinfo() {
-    echo "v 1.2.2"
+    echo "v 1.2.3"
     exit 0
+}
+
+function gitpush() {
+    echo
+    git add . # . grabs recursively & * ignores .hiddenfile; therefore, "git add ."
+    read -p "What's your commit message? " varmsg
+    git commit -m "$varmsg"
+    read -p "Shortname? Defaults to origin: " varremote
+    if [ -z "$varremote" ]; then
+        varremote="origin"
+    fi
+    read -p "Branch? Defaults to main: " varbranch
+    if [ -z "$varbranch" ]; then
+        varbranch="main"
+    fi
+    git push "$varremote" "$varbranch"
+}
+
+function gitrem() {
+    echo
+    read -p "What file would you like to remove? " vargitrm
+    git rm "$vargitrm"
+}
+
+function gitign() {
+    echo
+    read -p "What file would you like to add to .gitignore? " varignore
+    echo "$varignore" >> $repository/.gitignore
+}
+
+function gitpull () {
+    read -p "Remote shortname? Defaults to origin: " varremote
+    if [ -z "$varremote" ]; then
+        varremote="origin"
+        echo
+    fi
+    read -p "Branch? Defaults to main: " varbranch
+    if [ -z "$varbranch" ]; then
+        varbranch="main"
+        echo
+    fi
+    git pull "$varremote" "$varbranch"
 }
 
 function helpme() {
@@ -20,9 +62,9 @@ function helpme() {
 }
 
 function exitpoll() {
-    read -p "Would you like to exit [e] or continue [anything else]? " varcont
+    read -p "Would you like to exit [x] or continue [anything else]? " varcont
     echo
-    if [ "$varcont" = "e" ]; then
+    if [ "$varcont" = "x" ]; then
         echo "Thanks for coding with us! Hope it helped!"
         exit 0
     else
@@ -66,10 +108,9 @@ function initsequence() {
     fi
 }
 
-### Main Body of the status-poller
 function mainloop() {
 	# Build (strong air quote) UI
-	echo "Git Status Watch (gsw) - an even lazier person's lazygit."
+	echo "Git Status Watch (gsw) - a terminal HUD for your repos."
 	echo "-------------------------------------------------------------"
 	echo "* You're currently watching $(pwd) $(git branch)."
 	echo
@@ -82,40 +123,16 @@ function mainloop() {
 	git status
 	echo
 	# That was the output, now for the input portion of the HUD
-	echo "Options: [c] add & commit; [r] rm a file; [i] add file to gitignore; [x] exit"
+	echo "Options: [p] pull; [c] commit; [r] remove; [i] gitignore; [x] exit"
 	read -t $polltime -n 1 -p "What would you like to do? " varcommit
-	if [ "$varcommit" = "c" ]; then # Then we git add, git commit, damn
-		cd $repository # double-check we're in the right place for safety purposes
-		echo
-		git add . # . grabs recursively & * ignores .hiddenfile; therefore, "git add ."
-		read -p "What's your commit message? " varmsg
-		git commit -m "$varmsg"
-		read -p "Shortname? Defaults to origin: " varremote
-		if [ -z "$varremote" ]; then
-			varremote="origin"
-		fi
-		read -p "Branch? Defaults to main: " varbranch
-		if [ -z "$varbranch" ]; then
-			varbranch="main"
-		fi
-		git push "$varremote" "$varbranch"
-		exitpoll
-    elif [ "$varcommit" = "r" ]; then
-        echo
-        read -p "What file would you like to remove? " vargitrm
-        git rm "$vargitrm"
-    elif [ "$varcommit" = "i" ]; then
-        cd $repository # double-check we're in the right place for safety purposes
-        echo
-        read -p "What file would you like to add to .gitignore? " varignore
-        echo "$varignore" >> .gitignore
-    elif [ "$varcommit" = "x" ]; then
-        echo
-        echo "Thanks for coding with us! Hope it helped!"
-        exit 0
-	else
-        clear
-	fi
+	case "$varcommit" in
+        "p") gitpull;;
+        "c") gitpush;;
+        "r") gitrem;;
+        "i") gitign;;
+        "x") exitpoll;;
+        *) clear;;
+    esac
 }
 
 #############################################################################################
@@ -134,7 +151,7 @@ do
 done
 
 clear
-echo "Welcome to gsw - git status watch, an even lazier person's lazygit."
+echo "Welcome to Git Status Watch (gsw), a terminal HUD for your repos."
 sleep 2
 initsequence
 clear
