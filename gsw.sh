@@ -36,6 +36,7 @@ function gitign() {
 }
 
 function gitpull () {
+    echo
     read -p "Remote shortname? Defaults to origin: " varremote
     if [ -z "$varremote" ]; then
         varremote="origin"
@@ -62,6 +63,7 @@ function helpme() {
 }
 
 function exitpoll() {
+    echo
     read -p "Would you like to exit [x] or continue [anything else]? " varcont
     echo
     if [ "$varcont" = "x" ]; then
