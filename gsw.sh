@@ -3,7 +3,7 @@
 # simple bash HUD for polling git status/logs, automating the basic aspects of the git workflow
 
 function gswverinfo() {
-    echo "v 1.2.5"
+    echo "v 1.2.6a"
     exit 0
 }
 

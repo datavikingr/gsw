@@ -30,7 +30,7 @@ function updatecheck() {
         installgsw
     else
         varversion=$(gsw -v)
-        if [ "$varversion" = "v 1.2.5" ]; then
+        if [ "$varversion" = "v 1.2.6a" ]; then
             echo "You're already up to date!"
             exit 0
         fi
