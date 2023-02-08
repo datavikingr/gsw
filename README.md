@@ -1,26 +1,27 @@
-# gsw - git status watch
+# gsw - git status watch v 2.0!!
 
-gsw is a git status watcher, with some push and pull features. It's a tui-based HUD for your repos while you code.
+gsw is a fully featured tui-based HUD for your git repos while you code. Think of it as similar to top/htop for git repo management. 
 
-Think of it as similar to top/htop for git repo management; or even lazygit- but even lazier.
-
-![GSW_1-2-1](https://user-images.githubusercontent.com/43792895/211354128-2075bbd4-6ca7-4ddb-bb86-0797c5c1646d.png)
+![image](https://user-images.githubusercontent.com/43792895/217566183-266466da-6e9b-4295-a710-0f4d9d9d21f2.png)
 
 ## Features:
-- install.sh now updates and installs per user or globally!
+- install.sh updates/installs globally or in user-land!
 - status, logs, working directory, branch in HUD
-- git add . , commit, push/pull, ignore, rm
-- custom polling time (default 10s) and custom path (default current directory) as arguments
+- typical git workflow: add/commit, push, pull, rm, branch management, .gitignore
+- Flag Arguments:
+  - -t: customize refresh rate (default 10s)
+  - -r: custom repo filepath path (default current directory)
+  - -l: customize number of log entries in HUD (default 3)
 
 ## TODO:
-- add git branch mechanics
-- add update check to gsw.sh
+- ~add git branch mechanics~
+- ~add update check to gsw.sh~
+- ~branch management~
 
 ## Install (or Update)
-Navigate to your code directory, pull/clone as desired.
-
-Then run:
+Navigate to your code directory (usually ~/src or ~/code).Then run:
 ```
+git clone https://github.com/futurehaskins/gsw
 ./install.sh
 ```
 
