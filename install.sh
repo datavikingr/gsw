@@ -15,8 +15,11 @@ function installgsw() {
         exit 0
     else
         mkdir -p ~/.local/bin/
+        if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+            export PATH=$PATH:$HOME/.local/bin
+        fi
         cp ./gsw.sh ~/.local/bin/gsw
-        echo "Make sure ~/.local/bin is in your \$PATH variable. Local install is complete! Thanks for picking gsw!"
+        echo "User-land installation complete! Thanks for picking gsw!"
         exit 0
     fi
 }
@@ -27,10 +30,11 @@ function updatecheck() {
         installgsw
     else
         varversion=$(gsw -v)
-        if [ "$varversion" = "v 1.2.3" ]; then
+        if [ "$varversion" = "v 1.2.5" ]; then
             echo "You're already up to date!"
             exit 0
         fi
+        echo "Updating..."
         gswinstallpath=$(echo $varalready | sed 's/gsw//')
         if [ "$gswinstallpath" = "/usr/bin/" ]; then
             sudo rm $varalready
@@ -39,7 +43,6 @@ function updatecheck() {
             rm $varalready
             cp ./gsw.sh ~/.local/bin/gsw
         fi
-        echo
         echo "Update complete! Thanks for staying with us!"
         exit 0
     fi

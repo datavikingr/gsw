@@ -3,15 +3,47 @@
 # simple bash HUD for polling git status/logs, automating the basic aspects of the git workflow
 
 function gswverinfo() {
-    echo "v 1.2.3"
+    echo "v 1.2.5"
     exit 0
+}
+
+function helpme() {
+	echo "gsw - Git Status Watch v 1.2.4"
+	echo 
+	echo "usage: gsw [-t X] [-r filepath] [-l X] [-v]"	
+	echo "  -t <int> refresh rate in seconds (default 10 seconds)"
+	echo "  -r <filepath> repository directory, relative or absolute are fine (default cwd)"
+	echo "  -l <int> number of log entries to display (default 3)"
+	echo "  -v (shows version)"
+	echo
+	echo "Keep track of changes to your repo - live, local, and latebreaking. Happy coding!"
+	exit 0
+}
+
+function gitpull () {
+    echo
+    read -p "Remote shortname? Defaults to origin: " varremote
+    if [ -z "$varremote" ]; then
+        varremote="origin"
+        echo
+    fi
+    read -p "Branch? Defaults to main: " varbranch
+    if [ -z "$varbranch" ]; then
+        varbranch="main"
+        echo
+    fi
+    git pull "$varremote" "$varbranch"
+}
+
+function gitcomm() {
+    echo
+    git add . 
+    read -p "What's your commit message? " varmsg
+    git commit -m "$varmsg"
 }
 
 function gitpush() {
     echo
-    git add . # . grabs recursively & * ignores .hiddenfile; therefore, "git add ."
-    read -p "What's your commit message? " varmsg
-    git commit -m "$varmsg"
     read -p "Shortname? Defaults to origin: " varremote
     if [ -z "$varremote" ]; then
         varremote="origin"
@@ -35,33 +67,6 @@ function gitign() {
     echo "$varignore" >> $repository/.gitignore
 }
 
-function gitpull () {
-    echo
-    read -p "Remote shortname? Defaults to origin: " varremote
-    if [ -z "$varremote" ]; then
-        varremote="origin"
-        echo
-    fi
-    read -p "Branch? Defaults to main: " varbranch
-    if [ -z "$varbranch" ]; then
-        varbranch="main"
-        echo
-    fi
-    git pull "$varremote" "$varbranch"
-}
-
-function helpme() {
-	echo "gsw - Git Status Watch(er)"
-	echo 
-	echo "usage: gsw [-t X] [-r filepath] [-v]"	
-	echo "  -t <int> time in seconds (default 10 seconds)"
-	echo "  -r <filepath> repository directory, relative or absolute are fine (default cwd)"
-	echo "  -v (shows version)"
-	echo
-	echo "Keep track of changes to your repo - live, local, and latebreaking."
-	exit 0
-}
-
 function exitpoll() {
     echo
     read -p "Would you like to exit [x] or continue [anything else]? " varcont
@@ -78,58 +83,47 @@ function exitpoll() {
     fi
 }
 
-function initsequence() {
-    if [ -z "$repository" ]; then
-        repository=$(pwd) # if argument was blank, default to cwd
-    fi
-    cd $repository # Go there.
-    varisgit=$(find . -maxdepth 1 -mindepth 1 -type d -name ".git") #find the .git folder, proving its a repo.
-    if [ -z "$varisgit" ]; then
-        echo "No git repository found in the current/specified directory. Try again."
-        exit 1
-    fi
-    if [ -z "$polltime" ]; then # Poll-time check; default 10 seconds. Old versions used 30s - was too long & caused confusion
-        polltime="10"
-    fi
-    read -p "Would you like to pull before getting started? " varpull
-    if [[ "$varpull" == "y" ]]; then
-        cd $repository
-        read -p "Remote shortname? Defaults to origin: " varremote
-        if [ -z "$varremote" ]; then
-            varremote="origin"
-            echo
-        fi
-        read -p "Branch? Defaults to main: " varbranch
-        if [ -z "$varbranch" ]; then
-            varbranch="main"
-            echo
-        fi
-        git pull "$varremote" "$varbranch"
-    else
-        echo echo "ᚫᚻ"
-    fi
-}
+#TODO: Branch management is 2.0.
+
+#function branchnew() {}
+#git checkout -b <branch_name>
+
+#function branchswitch() {}
+#git checkout <branch_name>
+
+#function branchmerge() {}
+#git checkout <branch_to_merge_into>
+#git merge <branch_to_merge_from>
+
+#function branchdelete() {}
+#git branch -d <branch_name>
+
+#function branchpush() {}
+#git push -u origin <branch_name>
 
 function mainloop() {
-	# Build (strong air quote) UI
+    # Build (strong air quote) UI
+    varpwbranch=$(git branch | grep '^\*' | awk '{print $2}') #'p(rint)w(orking)branch', if that's more clear.
 	echo "Git Status Watch (gsw) - a terminal HUD for your repos."
 	echo "-------------------------------------------------------------"
-	echo "* You're currently watching $(pwd) $(git branch)."
+	echo "* You're currently watching $(pwd) * $varpwbranch."
 	echo
 	echo "Logs:"
 	echo "-------------------------------------------------------------"
-	git log --graph -n 5 --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	# git log --graph -n 3 --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	git log --graph -n $logs --pretty=format:'%C(bold blue)<%an>%Creset - %s %Cgreen(%cr)' --abbrev-commit
 	echo
 	echo "Status:"
 	echo "-------------------------------------------------------------"
 	git status
 	echo
-	# That was the output, now for the input portion of the HUD
-	echo "Options: [p] pull; [c] commit; [r] remove; [i] gitignore; [x] exit"
+	echo "Basic Options:  [p] pull; [c] add/commit; [h] push; [r] remove; [i] gitignore; [x] exit"
+#TODO for 2.0: echo "Branch Options: [n] new; [s] switch; [m] merge; [d] delete; [u] push branch"
 	read -t $polltime -n 1 -p "What would you like to do? " varcommit
 	case "$varcommit" in
         "p") gitpull;;
-        "c") gitpush;;
+        "c") gitcomm;;
+        "h") gitpush;;
         "r") gitrem;;
         "i") gitign;;
         "x") exitpoll;;
@@ -141,21 +135,35 @@ function mainloop() {
 ## START - hilariously late in the script to begin, but required definitions are required. ##
 #############################################################################################
 
-
-while getopts "hvtr:" flag
+while getopts "hvtrl:" flag
 do
     case "${flag}" in
         h) helpme ;;
         v) gswverinfo ;;
         t) polltime=${OPTARG};; 
         r) repository=${OPTARG};;
+        l) logs=${OPTARG};;
     esac
 done
 
 clear
 echo "Welcome to Git Status Watch (gsw), a terminal HUD for your repos."
 sleep 2
-initsequence
+if [ -z "$repository" ]; then
+    repository=$(pwd) # if argument was blank, default to cwd
+fi
+cd $repository # Go there.
+varisgit=$(find . -maxdepth 1 -mindepth 1 -type d -name ".git") #find the .git folder, proving its a repo.
+if [ -z "$varisgit" ]; then
+    echo "No git repository found in the current/specified directory. Try again."
+    exit 1
+fi
+if [ -z "$polltime" ]; then # Poll-time check; default 10 seconds.
+    polltime="10"
+fi
+if [ -z "$logs" ]; then
+    logs="3" # if argument was blank, default to cwd
+fi
 clear
 while : # It's always true, so it always loops!
 do
