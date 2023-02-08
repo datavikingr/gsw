@@ -33,6 +33,7 @@ function gitpull () {
         echo
     fi
     git pull "$varremote" "$varbranch"
+    clear
 }
 
 function gitcomm() {
@@ -40,6 +41,8 @@ function gitcomm() {
     git add . 
     read -p "What's your commit message? " varmsg
     git commit -m "$varmsg"
+    sleep 3
+    clear
 }
 
 function gitpush() {
@@ -53,18 +56,21 @@ function gitpush() {
         varbranch="main"
     fi
     git push "$varremote" "$varbranch"
+    clear
 }
 
 function gitrem() {
     echo
     read -p "What file would you like to remove? " vargitrm
     git rm "$vargitrm"
+    clear
 }
 
 function gitign() {
     echo
     read -p "What file would you like to add to .gitignore? " varignore
     echo "$varignore" >> $repository/.gitignore
+    clear
 }
 
 function exitpoll() {
