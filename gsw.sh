@@ -3,7 +3,7 @@
 # simple bash HUD for polling git status/logs, automating the basic aspects of the git workflow
 
 function gswverinfo() {
-    echo "v 1.2.6a"
+    echo "v 2.0"
     exit 0
 }
 
@@ -25,21 +25,25 @@ function gitpull () {
     read -p "Remote shortname? Defaults to origin: " varremote
     if [ -z "$varremote" ]; then
         varremote="origin"
-        echo
     fi
+    echo
     read -p "Branch? Defaults to main: " varbranch
     if [ -z "$varbranch" ]; then
         varbranch="main"
-        echo
     fi
+    echo
     git pull "$varremote" "$varbranch"
+    sleep 3
     clear
 }
 
 function gitcomm() {
     echo
     git add . 
-    read -p "What's your commit message? " varmsg
+    read -p "What's your commit message? Defaults to 'bug fixes': " varmsg
+    if [ -z "$varmsg" ]; then
+        varmsg="bug fixes"
+    fi
     git commit -m "$varmsg"
     sleep 3
     clear
@@ -47,29 +51,40 @@ function gitcomm() {
 
 function gitpush() {
     echo
-    read -p "Shortname? Defaults to origin: " varremote
+    read -p "Remote shortname? Defaults to origin: " varremote
     if [ -z "$varremote" ]; then
         varremote="origin"
     fi
+    echo
     read -p "Branch? Defaults to main: " varbranch
     if [ -z "$varbranch" ]; then
         varbranch="main"
     fi
     git push "$varremote" "$varbranch"
+    sleep 3
     clear
 }
 
 function gitrem() {
     echo
-    read -p "What file would you like to remove? " vargitrm
+    read -p "What file would you like to remove? Empty cancels. " vargitrm
+    if [ -z "$vargitrm" ]; then
+        mainloop
+    fi
     git rm "$vargitrm"
+    sleep 3
     clear
 }
 
 function gitign() {
     echo
-    read -p "What file would you like to add to .gitignore? " varignore
+    read -p "What file would you like to add to .gitignore? Empty cancels. " varignore
+    if [ -z "$varignore" ]; then
+        mainloop
+    fi
+    touch $repository/.gitignore
     echo "$varignore" >> $repository/.gitignore
+    sleep 3
     clear
 }
 
@@ -89,23 +104,69 @@ function exitpoll() {
     fi
 }
 
-#TODO: Branch management is 2.0.
+function branchnew() {
+    echo
+    read -p "New branch name? Empty cancels. " varnewbranch
+    if [ -z "$varnewbranch" ]; then
+        mainloop
+    fi
+    git checkout -b "$varnewbranch"
+    sleep 3
+    clear
+}
 
-#function branchnew() {}
-#git checkout -b <branch_name>
+function branchswitch() {
+    echo
+    git branch
+    echo
+    read -p "Switch to which branch? Empty cancels. " varswitchbranch
+    if [ -z "$varswitchbranch" ]; then
+        mainloop
+    fi
+    git checkout "$varswitchbranch"
+    sleep 3
+    clear
+}
 
-#function branchswitch() {}
-#git checkout <branch_name>
+function branchmerge() {
+    echo
+    git branch
+    echo
+    read -p "Source branch for merge? Empty cancels. " varsourcebranch
+    if [ -z "$varsourcebranch" ]; then
+        mainloop
+    fi
+    echo
+    read -p "Target branch for merge? Empty cancels. " vartargetbranch
+    if [ -z "$vartargetbranch" ]; then
+        mainloop
+    fi
+    git checkout "$vartargetbranch"
+    git merge "$varsourcebranch"
+    sleep 3
+    clear
+}
 
-#function branchmerge() {}
-#git checkout <branch_to_merge_into>
-#git merge <branch_to_merge_from>
+function branchdelete() {
+    echo
+    git branch
+    echo
+    read -p "Branch to delete? Empty cancels. " varkillbranch
+    if [ -z "$varkillbranch" ]; then
+        mainloop
+    fi
+    git branch -d "$varkillbranch"
+    sleep 3
+    clear
+}    
 
-#function branchdelete() {}
-#git branch -d <branch_name>
+function branchpush() {
+    echo
+    varpwbranch=$(git branch | grep '^\*' | awk '{print $2}')
+    echo "Your current branch: $varpwbranch."
+    gitpush
+}
 
-#function branchpush() {}
-#git push -u origin <branch_name>
 
 function mainloop() {
     # Build (strong air quote) UI
@@ -124,7 +185,7 @@ function mainloop() {
 	git status
 	echo
 	echo "Basic Options:  [p] pull; [c] add/commit; [h] push; [r] remove; [i] gitignore; [x] exit"
-#TODO for 2.0: echo "Branch Options: [n] new; [s] switch; [m] merge; [d] delete; [u] push branch"
+    echo "Branch Options: [n] new; [s] switch; [m] merge; [d] delete; [u] push branch"
 	read -t $polltime -n 1 -p "What would you like to do? " varcommit
 	case "$varcommit" in
         "p") gitpull;;
@@ -133,6 +194,11 @@ function mainloop() {
         "r") gitrem;;
         "i") gitign;;
         "x") exitpoll;;
+        "n") branchnew;;
+        "s") branchswitch;;
+        "m") branchmerge;;
+        "d") branchdelete;;
+        "u") branchpush;;
         *) clear;;
     esac
 }
