@@ -24,6 +24,9 @@ def init_colors():
     curses.init_pair(6, curses.COLOR_MAGENTA, -1)
     curses.init_pair(7, curses.COLOR_WHITE, -1)
     curses.init_pair(8, curses.COLOR_BLACK, curses.COLOR_WHITE)
+    curses.init_color(9,350,350,350)
+    curses.init_pair(10, 9, -1)
+
 
 def draw_box(stdscr, y, h, w, label=""):
     stdscr.attron(curses.color_pair(7))
@@ -85,7 +88,7 @@ def prompt(stdscr, prompt_str):
 
     for y in range(height):
         for x in range(width):
-            stdscr.chgat(y, x, 1, curses.A_DIM)
+            stdscr.chgat(y, x, 1, curses.color_pair(10))
 
     stdscr.attron(curses.color_pair(7))
     stdscr.addstr(start_y, start_x, "┌" + "─" * (box_width - 2) + "┐")
