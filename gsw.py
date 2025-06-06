@@ -44,10 +44,6 @@ def draw_main(stdscr, repo_path, log_count):
     width = curses.COLS
     height = curses.LINES
 
-    # Header panel
-
-
-    # Top panel with repo, branch, and time
     title_left = "GSW"
     title_right = now
     title_center = f"{repo_path} * {branch}"
@@ -57,14 +53,12 @@ def draw_main(stdscr, repo_path, log_count):
     stdscr.addstr(0, 0, header[:width])
     stdscr.attroff(curses.color_pair(7))
 
-    # Logs panel
     log_box_height = log_count + 4
     draw_box(stdscr, 2, log_box_height, width, "Logs")
     log_output = run_cmd(f"git log --graph -n {log_count} --pretty=format:'<%an> - %s (%cr)' --abbrev-commit")
     for idx, line in enumerate(log_output.splitlines()):
         stdscr.addstr(3 + idx, 2, line[:width - 4], curses.color_pair(5))
 
-    # Status panel
     status_output = run_cmd("git status")
     status_lines = status_output.splitlines()
     status_box_y = 2 + log_box_height + 1
@@ -74,7 +68,6 @@ def draw_main(stdscr, repo_path, log_count):
         color = curses.color_pair(2) if "modified" in line else 0
         stdscr.addstr(status_box_y + 1 + idx, 2, line[:width - 4], color)
 
-    # Menu panel
     menu_y = height - 5
     draw_box(stdscr, menu_y, 4, width, "Menu")
     stdscr.addstr(menu_y + 1, 2, "Basic:  [a] add  [c] commit  [p] pull  [h] push  [r] remove  [i] ignore  [x] exit", curses.color_pair(4))
@@ -84,19 +77,35 @@ def draw_main(stdscr, repo_path, log_count):
 
 def prompt(stdscr, prompt_str):
     curses.echo()
-    stdscr.nodelay(False)  # Pause auto-refresh and key polling
-    stdscr.move(curses.LINES - 1, 0)
-    stdscr.clrtoeol()
+    stdscr.nodelay(False)
+    height, width = stdscr.getmaxyx()
+    box_height, box_width = 5, max(30, len(prompt_str) + 10)
+    start_y = (height - box_height) // 2
+    start_x = (width - box_width) // 2
+
+    for y in range(height):
+        for x in range(width):
+            stdscr.chgat(y, x, 1, curses.A_DIM)
+
+    stdscr.attron(curses.color_pair(7))
+    stdscr.addstr(start_y, start_x, "┌" + "─" * (box_width - 2) + "┐")
+    for i in range(1, box_height - 1):
+        stdscr.addstr(start_y + i, start_x, "│" + " " * (box_width - 2) + "│")
+    stdscr.addstr(start_y + box_height - 1, start_x, "└" + "─" * (box_width - 2) + "┘")
+    stdscr.attroff(curses.color_pair(7))
+
     stdscr.attron(curses.color_pair(6))
-    stdscr.addstr(curses.LINES - 1, 0, prompt_str)
+    stdscr.addstr(start_y + 1, start_x + 2, prompt_str[:box_width - 4])
     stdscr.attroff(curses.color_pair(6))
+    stdscr.move(start_y + 2, start_x + 2)
     stdscr.refresh()
+
     try:
         input_str = stdscr.getstr().decode()
     except:
         input_str = ""
     curses.noecho()
-    stdscr.nodelay(True)  # Resume polling
+    stdscr.nodelay(True)
     return input_str
 
 def main(stdscr, args):
@@ -174,6 +183,8 @@ def main(stdscr, args):
             branch = get_current_branch()
             remote = prompt(stdscr, f"Remote [origin] to push {branch}: ") or "origin"
             run_cmd(f"git push {remote} {branch}")
+        elif key == ':':
+            prompt(stdscr, "Commit message [bug fixes]: ")
 
         draw_main(stdscr, repo_path, log_count)
         last_refresh = time.monotonic()
