@@ -84,11 +84,19 @@ def draw_main(stdscr, repo_path, log_count):
 
 def prompt(stdscr, prompt_str):
     curses.echo()
-    stdscr.addstr(curses.LINES - 1, 0, prompt_str)
+    stdscr.nodelay(False)  # Pause auto-refresh and key polling
+    stdscr.move(curses.LINES - 1, 0)
     stdscr.clrtoeol()
+    stdscr.attron(curses.color_pair(6))
+    stdscr.addstr(curses.LINES - 1, 0, prompt_str)
+    stdscr.attroff(curses.color_pair(6))
     stdscr.refresh()
-    input_str = stdscr.getstr().decode()
+    try:
+        input_str = stdscr.getstr().decode()
+    except:
+        input_str = ""
     curses.noecho()
+    stdscr.nodelay(True)  # Resume polling
     return input_str
 
 def main(stdscr, args):
