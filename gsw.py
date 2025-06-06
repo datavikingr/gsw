@@ -7,7 +7,6 @@ import os
 import time
 from datetime import datetime
 
-
 def run_cmd(cmd):
     return subprocess.run(cmd, shell=True, capture_output=True, text=True).stdout.strip()
 
@@ -17,48 +16,70 @@ def get_current_branch():
 def init_colors():
     curses.start_color()
     curses.use_default_colors()
-    curses.init_pair(1, curses.COLOR_BLUE, -1)    # Blue
-    curses.init_pair(2, curses.COLOR_GREEN, -1)   # Green
-    curses.init_pair(3, curses.COLOR_RED, -1)     # Red
-    curses.init_pair(4, curses.COLOR_YELLOW, -1)  # Yellow
-    curses.init_pair(5, curses.COLOR_CYAN, -1)    # Cyan
-    curses.init_pair(6, curses.COLOR_MAGENTA, -1) # Magenta
-    curses.init_pair(7, curses.COLOR_WHITE, -1)   # Header text
+    curses.init_pair(1, curses.COLOR_BLUE, -1)
+    curses.init_pair(2, curses.COLOR_GREEN, -1)
+    curses.init_pair(3, curses.COLOR_RED, -1)
+    curses.init_pair(4, curses.COLOR_YELLOW, -1)
+    curses.init_pair(5, curses.COLOR_CYAN, -1)
+    curses.init_pair(6, curses.COLOR_MAGENTA, -1)
+    curses.init_pair(7, curses.COLOR_WHITE, -1)
+    curses.init_pair(8, curses.COLOR_BLACK, curses.COLOR_WHITE)
+
+def draw_box(stdscr, y, h, w, label=""):
+    stdscr.attron(curses.color_pair(7))
+    stdscr.addstr(y, 0, "┌" + "─" * (w - 2) + "┐")
+    for i in range(1, h - 1):
+        stdscr.addstr(y + i, 0, "│" + " " * (w - 2) + "│")
+    stdscr.addstr(y + h - 1, 0, "└" + "─" * (w - 2) + "┘")
+    if label:
+        stdscr.addstr(y, 2, f" {label} ")
+    stdscr.attroff(curses.color_pair(7))
 
 def draw_main(stdscr, repo_path, log_count):
     stdscr.clear()
     curses.curs_set(0)
-
     os.chdir(repo_path)
     branch = get_current_branch()
     now = datetime.now().strftime("%H:%M")
+    width = curses.COLS
+    height = curses.LINES
+
+    # Header panel
+
 
     # Top panel with repo, branch, and time
-    width = curses.COLS
     title_left = "GSW"
     title_right = now
     title_center = f"{repo_path} * {branch}"
     spacer = " " * int(max(0, width - len(title_left) - len(title_center) - len(title_right) - 6)/2)
     header = f" {title_left} {spacer} {title_center} {spacer} {title_right} "
-    stdscr.addstr(0, 0, header[:width], curses.color_pair(7) )
+    stdscr.attron(curses.color_pair(7))
+    stdscr.addstr(0, 0, header[:width])
+    stdscr.attroff(curses.color_pair(7))
 
-    stdscr.addstr(2, 0, "Logs:", curses.A_UNDERLINE)
-    stdscr.addstr(3, 0, "-------------------------------------------------------------")
+    # Logs panel
+    log_box_height = log_count + 4
+    draw_box(stdscr, 2, log_box_height, width, "Logs")
     log_output = run_cmd(f"git log --graph -n {log_count} --pretty=format:'<%an> - %s (%cr)' --abbrev-commit")
     for idx, line in enumerate(log_output.splitlines()):
-        stdscr.addstr(4 + idx, 0, line, curses.color_pair(5))
+        stdscr.addstr(3 + idx, 2, line[:width - 4], curses.color_pair(5))
 
-    y = 4 + len(log_output.splitlines()) + 1
-    stdscr.addstr(y, 0, "Status:", curses.A_UNDERLINE)
-    stdscr.addstr(y + 1, 0, "-------------------------------------------------------------")
+    # Status panel
     status_output = run_cmd("git status")
-    for idx, line in enumerate(status_output.splitlines()):
-        stdscr.addstr(y + 2 + idx, 0, line, curses.color_pair(2) if "modified" in line else 0)
+    status_lines = status_output.splitlines()
+    status_box_y = 2 + log_box_height + 1
+    status_box_height = len(status_lines) + 3
+    draw_box(stdscr, status_box_y, status_box_height, width, "Status")
+    for idx, line in enumerate(status_lines):
+        color = curses.color_pair(2) if "modified" in line else 0
+        stdscr.addstr(status_box_y + 1 + idx, 2, line[:width - 4], color)
 
-    # Bottom menu panel
-    menu_y = curses.LINES - 3
-    stdscr.addstr(menu_y, 0, "Basic Options:  [a] add  [c] commit  [p] pull  [h] push  [r] remove  [i] ignore  [x] exit", curses.color_pair(4))
-    stdscr.addstr(menu_y + 1, 0, "Branch Options: [n] new  [s] switch  [m] merge  [d] delete  [u] push branch", curses.color_pair(4))
+    # Menu panel
+    menu_y = height - 5
+    draw_box(stdscr, menu_y, 4, width, "Menu")
+    stdscr.addstr(menu_y + 1, 2, "Basic:  [a] add  [c] commit  [p] pull  [h] push  [r] remove  [i] ignore  [x] exit", curses.color_pair(4))
+    stdscr.addstr(menu_y + 2, 2, "Branch: [n] new  [s] switch  [m] merge  [d] delete  [u] push branch", curses.color_pair(4))
+
     stdscr.refresh()
 
 def prompt(stdscr, prompt_str):
