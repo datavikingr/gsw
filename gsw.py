@@ -68,7 +68,7 @@ def draw_main(stdscr, repo_path, log_count):
     for idx, line in enumerate(tree_lines[:tree_height - 2]):
         stdscr.addstr(2 + idx, 2, line[:sidebar_width - 4], curses.color_pair(6))
 
-    main_start_x = sidebar_width + 2
+    main_start_x = sidebar_width + 1
 
     log_box_height = log_count + 2
     draw_box(stdscr, 1, log_box_height, main_width, main_start_x, "Logs")
