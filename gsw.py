@@ -10,12 +10,6 @@ from datetime import datetime
 def run_cmd(cmd):
     return subprocess.run(cmd, shell=True, capture_output=True, text=True).stdout.strip()
 
-def get_current_branch():
-    return run_cmd("git branch --show-current")
-
-def get_repo_tree():
-    return run_cmd("tree -L 2 --dirsfirst --noreport --gitignore")
-
 def init_colors():
     curses.start_color()
     curses.use_default_colors()
@@ -44,7 +38,7 @@ def draw_main(stdscr, repo_path, log_count):
     stdscr.clear()
     curses.curs_set(0)
     os.chdir(repo_path)
-    branch = get_current_branch()
+    branch = run_cmd("git branch --show-current")
     now = datetime.now().strftime("%H:%M")
     width = curses.COLS
     height = curses.LINES
@@ -61,7 +55,7 @@ def draw_main(stdscr, repo_path, log_count):
     stdscr.attroff(curses.color_pair(7))
 
     # Sidebar
-    tree_output = get_repo_tree()
+    tree_output = run_cmd("tree -L 2 --dirsfirst --noreport --gitignore")
     tree_lines = tree_output.splitlines()
     tree_height = height - 2
     draw_box(stdscr, 1, tree_height, sidebar_width, 0, "Repo Tree")
@@ -278,7 +272,7 @@ def main(stdscr, args):
             if branch:
                 run_cmd(f"git branch -d {branch}")
         elif key == 'u':
-            branch = get_current_branch()
+            branch = run_cmd("git branch --show-current")
             remote = prompt(stdscr, f"Remote [origin] to push {branch}: ") or "origin"
             run_cmd(f"git push {remote} {branch}")
         elif key == 'f':
