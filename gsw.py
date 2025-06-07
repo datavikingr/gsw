@@ -117,10 +117,60 @@ def draw_main(stdscr, repo_path, log_count):
 
     menu_y = height - 5
     draw_box(stdscr, menu_y - 1 , 5, main_width, main_start_x, "Menu")
-    stdscr.addstr(menu_y , main_start_x + 2, "Basic:  [a]dd  [c]ommit  [p]ull  pus[h]  [r]emove  [i]gnore  [x] exit", curses.color_pair(4))
-    stdscr.addstr(menu_y + 1, main_start_x + 2, "Branch: [n]ew  [s]witch  [m]erge  [d]elete  p[u]sh branch", curses.color_pair(4))
-    stdscr.addstr(menu_y + 2, main_start_x + 2, "Extra:  [f]etch  [z] stash  [y] pop  [b]lame  [l]ist branches", curses.color_pair(4))
+    stdscr.addstr(menu_y , main_start_x + 2, "Basic:  [f]etch  [p]ull  [a]dd  [r]emove  [c]ommit  pus[h]  [i]gnore  e[x]it", curses.color_pair(4))
+    stdscr.addstr(menu_y + 1, main_start_x + 2, "Branch: [l]ist branches  [n]ew  [s]witch  [m]erge  [d]elete  p[u]sh branch", curses.color_pair(4))
+    stdscr.addstr(menu_y + 2, main_start_x + 2, "Extra:  [z] stash  [y] pop  [b]lame ", curses.color_pair(4))
     stdscr.refresh()
+
+def show_pager(stdscr, title, lines):
+    height, width = stdscr.getmaxyx()
+    box_height = height - 4
+    box_width = width - 10
+    start_y = 2
+    start_x = 5
+
+    pos = 0
+    max_pos = max(0, len(lines) - (box_height - 2))
+
+    while True:
+        stdscr.erase()
+        draw_box(stdscr, start_y, box_height, box_width, start_x, title)
+
+        visible_lines = lines[pos:pos + box_height - 2]
+        for i, line in enumerate(visible_lines):
+            truncated = line[:box_width - 4]
+            stdscr.addstr(start_y + 1 + i, start_x + 2, truncated, curses.color_pair(7))
+
+        stdscr.refresh()
+
+        key = stdscr.getch()
+        if key in [ord('q'), 27]:  # 'q' or Esc
+            break
+        elif key in [curses.KEY_DOWN, ord('j')]:
+            pos = min(max_pos, pos + 1)
+        elif key in [curses.KEY_UP, ord('k')]:
+            pos = max(0, pos - 1)
+        elif key in [curses.KEY_NPAGE]:  # Page down
+            pos = min(max_pos, pos + (box_height - 2))
+        elif key in [curses.KEY_PPAGE]:  # Page up
+            pos = max(0, pos - (box_height - 2))
+
+def small_prompt(stdscr, prompt_str):
+    curses.echo()
+    stdscr.nodelay(False)  # Pause auto-refresh and key polling
+    stdscr.move(curses.LINES - 1, 0)
+    stdscr.clrtoeol()
+    stdscr.attron(curses.color_pair(6))
+    stdscr.addstr(curses.LINES - 1, 0, prompt_str)
+    stdscr.attroff(curses.color_pair(6))
+    stdscr.refresh()
+    try:
+        input_str = stdscr.getstr().decode()
+    except:
+        input_str = ""
+    curses.noecho()
+    stdscr.nodelay(True)  # Resume polling
+    return input_str
 
 def prompt(stdscr, prompt_str):
     curses.echo()
@@ -241,11 +291,16 @@ def main(stdscr, args):
         elif key == 'b':
             file = prompt(stdscr, "File to blame:")
             if file:
-                os.system(f"git blame {file} | less")
+                output = run_cmd(f"git blame {file}")
+                lines = output.splitlines()
+                show_pager(stdscr, f"Blame: {file}", lines)
         elif key == 'l':
-            os.system("git branch | less")
+            output = run_cmd("git branch --sort=-committerdate")
+            lines = output.splitlines()
+            show_pager(stdscr, "Branches", lines)
         elif key == ':':
-            prompt(stdscr, "This is just testing ")
+            command = small_prompt(stdscr, ":")
+            run_cmd(command)
 
         draw_main(stdscr, repo_path, log_count)
         last_refresh = time.monotonic()
