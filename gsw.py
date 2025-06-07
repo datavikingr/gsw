@@ -14,7 +14,7 @@ def get_current_branch():
     return run_cmd("git branch --show-current")
 
 def get_repo_tree():
-    return run_cmd("tree -L 1 --dirsfirst --noreport --gitignore")
+    return run_cmd("tree -L 2 --dirsfirst --noreport --gitignore")
 
 def init_colors():
     curses.start_color()
@@ -68,7 +68,7 @@ def draw_main(stdscr, repo_path, log_count):
     for idx, line in enumerate(tree_lines[:tree_height - 2]):
         stdscr.addstr(2 + idx, 2, line[:sidebar_width - 4], curses.color_pair(6))
 
-    main_start_x = sidebar_width + 1
+    main_start_x = sidebar_width + 1 
 
     log_box_height = log_count + 2
     draw_box(stdscr, 1, log_box_height, main_width, main_start_x, "Logs")
@@ -119,7 +119,7 @@ def draw_main(stdscr, repo_path, log_count):
     draw_box(stdscr, menu_y - 1 , 5, main_width, main_start_x, "Menu")
     stdscr.addstr(menu_y , main_start_x + 2, "Basic:  [f]etch  [p]ull  [a]dd  [r]emove  [c]ommit  pus[h]  [i]gnore  e[x]it", curses.color_pair(4))
     stdscr.addstr(menu_y + 1, main_start_x + 2, "Branch: [l]ist branches  [n]ew  [s]witch  [m]erge  [d]elete  p[u]sh branch", curses.color_pair(4))
-    stdscr.addstr(menu_y + 2, main_start_x + 2, "Extra:  [z] stash  [y] pop  [b]lame ", curses.color_pair(4))
+    stdscr.addstr(menu_y + 2, main_start_x + 2, "Extra:  [z] stash  [y] pop  [b]lame [:] shell command", curses.color_pair(4))
     stdscr.refresh()
 
 def show_pager(stdscr, title, lines):
@@ -300,7 +300,9 @@ def main(stdscr, args):
             show_pager(stdscr, "Branches", lines)
         elif key == ':':
             command = small_prompt(stdscr, ":")
-            run_cmd(command)
+            custom_comm_output = run_cmd(command)
+            lines = custom_comm_output.splitlines()
+            show_pager(stdscr, command, lines)
 
         draw_main(stdscr, repo_path, log_count)
         last_refresh = time.monotonic()
