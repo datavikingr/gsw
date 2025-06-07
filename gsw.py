@@ -13,6 +13,9 @@ def run_cmd(cmd):
 def get_current_branch():
     return run_cmd("git branch --show-current")
 
+def get_repo_tree():
+    return run_cmd("tree -L 1 --dirsfirst --noreport --gitignore")
+
 def init_colors():
     curses.start_color()
     curses.use_default_colors()
@@ -27,15 +30,14 @@ def init_colors():
     curses.init_color(9,350,350,350)
     curses.init_pair(10, 9, -1)
 
-
-def draw_box(stdscr, y, h, w, label=""):
+def draw_box(stdscr, y, h, w, x=0, label=""):
     stdscr.attron(curses.color_pair(7))
-    stdscr.addstr(y, 0, "┌" + "─" * (w - 2) + "┐")
+    stdscr.addstr(y, x, "┌" + "─" * (w - 2) + "┐")
     for i in range(1, h - 1):
-        stdscr.addstr(y + i, 0, "│" + " " * (w - 2) + "│")
-    stdscr.addstr(y + h - 1, 0, "└" + "─" * (w - 2) + "┘")
+        stdscr.addstr(y + i, x, "│" + " " * (w - 2) + "│")
+    stdscr.addstr(y + h - 1, x, "└" + "─" * (w - 2) + "┘")
     if label:
-        stdscr.addstr(y, 2, f" {label} ")
+        stdscr.addstr(y, x + 2, f" {label} ")
     stdscr.attroff(curses.color_pair(7))
 
 def draw_main(stdscr, repo_path, log_count):
@@ -46,6 +48,8 @@ def draw_main(stdscr, repo_path, log_count):
     now = datetime.now().strftime("%H:%M")
     width = curses.COLS
     height = curses.LINES
+    sidebar_width = 30
+    main_width = width - sidebar_width - 2
 
     title_left = "GSW"
     title_right = now
@@ -56,17 +60,27 @@ def draw_main(stdscr, repo_path, log_count):
     stdscr.addstr(0, 0, header[:width])
     stdscr.attroff(curses.color_pair(7))
 
+    # Sidebar
+    tree_output = get_repo_tree()
+    tree_lines = tree_output.splitlines()
+    tree_height = height - 2
+    draw_box(stdscr, 1, tree_height, sidebar_width, 0, "Repo Tree")
+    for idx, line in enumerate(tree_lines[:tree_height - 2]):
+        stdscr.addstr(2 + idx, 2, line[:sidebar_width - 4], curses.color_pair(6))
+
+    main_start_x = sidebar_width + 2
+
     log_box_height = log_count + 2
-    draw_box(stdscr, 2, log_box_height, width, "Logs")
+    draw_box(stdscr, 1, log_box_height, main_width, main_start_x, "Logs")
     log_output = run_cmd(f"git log --graph -n {log_count} --pretty=format:'<%an> - %s (%cr)' --abbrev-commit")
     for idx, line in enumerate(log_output.splitlines()):
-        stdscr.addstr(3 + idx, 2, line[:width - 4], curses.color_pair(5))
+        stdscr.addstr(2 + idx, main_start_x + 2, line[:main_width - 4], curses.color_pair(5))
 
     status_output = run_cmd("git status")
     status_lines = status_output.splitlines()
-    status_box_y = 2 + log_box_height + 1
-    status_box_height = len(status_lines) + 3
-    draw_box(stdscr, status_box_y, status_box_height, width, "Status")
+    status_box_y = 1 + log_box_height
+    status_box_height = 16
+    draw_box(stdscr, status_box_y, status_box_height, main_width, main_start_x, "Status")
 
     untracked = False
     staged = False
@@ -99,13 +113,13 @@ def draw_main(stdscr, repo_path, log_count):
         else:
             color = curses.color_pair(7)  # Default (white)
 
-        stdscr.addstr(status_box_y + 1 + idx, 2, line[:width - 4], color)
+        stdscr.addstr(status_box_y + 1 + idx, main_start_x + 2, line[:main_width - 4], color)
 
     menu_y = height - 5
-    draw_box(stdscr, menu_y, 4, width, "Menu")
-    stdscr.addstr(menu_y + 1, 2, "Basic:  [a] add  [c] commit  [p] pull  [h] push  [r] remove  [i] ignore  [x] exit", curses.color_pair(4))
-    stdscr.addstr(menu_y + 2, 2, "Branch: [n] new  [s] switch  [m] merge  [d] delete  [u] push branch", curses.color_pair(4))
-
+    draw_box(stdscr, menu_y - 1 , 5, main_width, main_start_x, "Menu")
+    stdscr.addstr(menu_y , main_start_x + 2, "Basic:  [a]dd  [c]ommit  [p]ull  pus[h]  [r]emove  [i]gnore  [x] exit", curses.color_pair(4))
+    stdscr.addstr(menu_y + 1, main_start_x + 2, "Branch: [n]ew  [s]witch  [m]erge  [d]elete  p[u]sh branch", curses.color_pair(4))
+    stdscr.addstr(menu_y + 2, main_start_x + 2, "Extra:  [f]etch  [z] stash  [y] pop  [b]lame  [l]ist branches", curses.color_pair(4))
     stdscr.refresh()
 
 def prompt(stdscr, prompt_str):
@@ -217,6 +231,19 @@ def main(stdscr, args):
             branch = get_current_branch()
             remote = prompt(stdscr, f"Remote [origin] to push {branch}: ") or "origin"
             run_cmd(f"git push {remote} {branch}")
+        elif key == 'f':
+            remote = prompt(stdscr, "Remote [origin]:") or "origin"
+            run_cmd(f"git fetch {remote}")
+        elif key == 'z':
+            run_cmd("git stash push -m 'gsw auto-stash'")
+        elif key == 'y':
+            run_cmd("git stash pop")
+        elif key == 'b':
+            file = prompt(stdscr, "File to blame:")
+            if file:
+                os.system(f"git blame {file} | less")
+        elif key == 'l':
+            os.system("git branch | less")
         elif key == ':':
             prompt(stdscr, "This is just testing ")
 
