@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# gsw - ᚫᚻ - Alex Haskins, 2025, under the MIT License. Go nuts with this code, fam. 
+# simple curses HUD for polling a repo's directory/status/logs, & automating the basic aspects of the git workflow
+
 import curses
 import subprocess
 import argparse
@@ -34,7 +37,7 @@ def draw_box(stdscr, y, h, w, x=0, label=""):
         stdscr.addstr(y, x + 2, f" {label} ")
     stdscr.attroff(curses.color_pair(7))
 
-def draw_main(stdscr, repo_path, log_count):
+def draw_main(stdscr, repo_path, log_count, status_pos):
     stdscr.clear()
     curses.curs_set(0)
     os.chdir(repo_path)
@@ -45,6 +48,7 @@ def draw_main(stdscr, repo_path, log_count):
     sidebar_width = 30
     main_width = width - sidebar_width - 2
 
+    # Title Bar & Header
     title_left = "GSW"
     title_right = now
     title_center = f"{repo_path} * {branch}"
@@ -62,14 +66,17 @@ def draw_main(stdscr, repo_path, log_count):
     for idx, line in enumerate(tree_lines[:tree_height - 2]):
         stdscr.addstr(2 + idx, 2, line[:sidebar_width - 4], curses.color_pair(6))
 
+    # Main, or non-sidebar
     main_start_x = sidebar_width + 1 
 
+    # Git logs box up at the top
     log_box_height = log_count + 2
     draw_box(stdscr, 1, log_box_height, main_width, main_start_x, "Logs")
     log_output = run_cmd(f"git log --graph -n {log_count} --pretty=format:'<%an> - %s (%cr)' --abbrev-commit")
     for idx, line in enumerate(log_output.splitlines()):
         stdscr.addstr(2 + idx, main_start_x + 2, line[:main_width - 4], curses.color_pair(5))
 
+    # Git Status box, in the middle
     status_output = run_cmd("git status")
     status_lines = status_output.splitlines()
     status_box_y = 1 + log_box_height
@@ -79,9 +86,10 @@ def draw_main(stdscr, repo_path, log_count):
     untracked = False
     staged = False
 
-    for idx, line in enumerate(status_lines):
+    status_visible_lines = status_lines[status_pos:status_pos + status_box_height - 2]
+    for idx, line in enumerate(status_visible_lines):
         line_lower = line.lower().strip()
-
+        # pre-processing for colorization
         if line_lower.startswith("changes to be committed"):
             staged = True
         elif line_lower.startswith("changes not staged for commit"):
@@ -91,7 +99,7 @@ def draw_main(stdscr, repo_path, log_count):
         elif line_lower == "":
             staged = False
             untracked = False
-
+        #colorizing the git status output
         if untracked and line.startswith("\t"):
             color = curses.color_pair(3)  # Red
         elif line_lower.startswith("untracked files"):
@@ -106,9 +114,16 @@ def draw_main(stdscr, repo_path, log_count):
             color = curses.color_pair(4)  # Yellow
         else:
             color = curses.color_pair(7)  # Default (white)
-
+        
+        arrow_x = main_start_x + main_width - 2  # Near box border
+        if status_pos > 0:
+            stdscr.addstr(status_box_y + 1, arrow_x, "↑", curses.color_pair(7))
+        if status_pos + 14 < len(status_lines):
+            stdscr.addstr(status_box_y + 14, arrow_x, "↓", curses.color_pair(7))
+        #actually drawing the lines of text
         stdscr.addstr(status_box_y + 1 + idx, main_start_x + 2, line[:main_width - 4], color)
 
+    # Menu Box at the bottom
     menu_y = height - 5
     draw_box(stdscr, menu_y - 1 , 5, main_width, main_start_x, "Menu")
     stdscr.addstr(menu_y , main_start_x + 2, "Basic:  [f]etch  [p]ull  [a]dd  [r]emove  [c]ommit  pus[h]  [i]gnore  e[x]it", curses.color_pair(4))
@@ -129,7 +144,13 @@ def show_pager(stdscr, title, lines):
     while True:
         stdscr.erase()
         draw_box(stdscr, start_y, box_height, box_width, start_x, title)
-
+        
+        arrow_x = box_width + 3  # Near box border
+        if pos > 0:
+            stdscr.addstr(start_y + 1, arrow_x, "↑", curses.color_pair(7))
+        if pos + box_height < max_pos:
+            stdscr.addstr(start_y + box_height - 2, arrow_x, "↓", curses.color_pair(7))
+        
         visible_lines = lines[pos:pos + box_height - 2]
         for i, line in enumerate(visible_lines):
             truncated = line[:box_width - 4]
@@ -206,6 +227,7 @@ def main(stdscr, args):
     repo_path = os.path.abspath(args.repository or os.getcwd())
     log_count = args.logs
     polltime = args.polltime
+    status_pos = 0
 
     if not os.path.isdir(os.path.join(repo_path, ".git")):
         stdscr.addstr(0, 0, "Not a valid Git repository.", curses.color_pair(3))
@@ -219,7 +241,7 @@ def main(stdscr, args):
     while True:
         now = time.monotonic()
         if now - last_refresh >= polltime:
-            draw_main(stdscr, repo_path, log_count)
+            draw_main(stdscr, repo_path, log_count, status_pos)
             last_refresh = now
 
         try:
@@ -292,13 +314,23 @@ def main(stdscr, args):
             output = run_cmd("git branch --sort=-committerdate")
             lines = output.splitlines()
             show_pager(stdscr, "Branches", lines)
+        elif key == 'j':
+            status_lines = run_cmd("git status").splitlines()
+            status_pos = min(len(status_lines) - 14, status_pos + 1)
+        elif key == 'KEY_DOWN':
+            status_lines = run_cmd("git status").splitlines()
+            status_pos = min(len(status_lines) - 14, status_pos + 1)
+        elif key == 'k':
+            status_pos = max(0, status_pos - 1)
+        elif key == 'KEY_UP':
+            status_pos = max(0, status_pos - 1)
         elif key == ':':
             command = small_prompt(stdscr, ":")
             custom_comm_output = run_cmd(command)
             lines = custom_comm_output.splitlines()
             show_pager(stdscr, command, lines)
 
-        draw_main(stdscr, repo_path, log_count)
+        draw_main(stdscr, repo_path, log_count, status_pos)
         last_refresh = time.monotonic()
 
 if __name__ == "__main__":
