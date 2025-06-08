@@ -1,9 +1,10 @@
-gsw-screenshot.png
+# Assets and their build artifacts
 *.kate-swp
-GSW_1-2-1.png
+#GSW_1-2-1.png
 #gsw_screencap.png
 
 # PyInstaller build artifacts
 build/
 dist/
 *.spec
+.venv

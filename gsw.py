@@ -68,9 +68,13 @@ def draw_main(stdscr, repo_path, log_count, status_pos):
 
     # Main, or non-sidebar
     main_start_x = sidebar_width + 1 
+    log_box_height = log_count + 2
+    menu_height = 5
+    menu_y = height - 5
+    status_box_height = height - log_box_height - menu_height - 2
 
     # Git logs box up at the top
-    log_box_height = log_count + 2
+    
     draw_box(stdscr, 1, log_box_height, main_width, main_start_x, "Logs")
     log_output = run_cmd(f"git log --graph -n {log_count} --pretty=format:'<%an> - %s (%cr)' --abbrev-commit")
     for idx, line in enumerate(log_output.splitlines()):
@@ -80,7 +84,6 @@ def draw_main(stdscr, repo_path, log_count, status_pos):
     status_output = run_cmd("git status")
     status_lines = status_output.splitlines()
     status_box_y = 1 + log_box_height
-    status_box_height = 16
     draw_box(stdscr, status_box_y, status_box_height, main_width, main_start_x, "Status")
 
     untracked = False
@@ -116,16 +119,16 @@ def draw_main(stdscr, repo_path, log_count, status_pos):
             color = curses.color_pair(7)  # Default (white)
         
         arrow_x = main_start_x + main_width - 2  # Near box border
+        max_lines = status_box_y + status_box_height - 2
         if status_pos > 0:
             stdscr.addstr(status_box_y + 1, arrow_x, "↑", curses.color_pair(7))
-        if status_pos + 14 < len(status_lines):
-            stdscr.addstr(status_box_y + 14, arrow_x, "↓", curses.color_pair(7))
+        if status_pos + max_lines < len(status_lines):
+            stdscr.addstr(max_lines, arrow_x, "↓", curses.color_pair(7))
         #actually drawing the lines of text
         stdscr.addstr(status_box_y + 1 + idx, main_start_x + 2, line[:main_width - 4], color)
 
     # Menu Box at the bottom
-    menu_y = height - 5
-    draw_box(stdscr, menu_y - 1 , 5, main_width, main_start_x, "Menu")
+    draw_box(stdscr, menu_y - 1 , menu_height, main_width, main_start_x, "Menu")
     stdscr.addstr(menu_y , main_start_x + 2, "Basic:  [f]etch  [p]ull  [a]dd  [r]emove  [c]ommit  pus[h]  [i]gnore  e[x]it", curses.color_pair(4))
     stdscr.addstr(menu_y + 1, main_start_x + 2, "Branch: [l]ist branches  [n]ew  [s]witch  [m]erge  [d]elete  p[u]sh branch", curses.color_pair(4))
     stdscr.addstr(menu_y + 2, main_start_x + 2, "Extra:  [z] stash  [y] pop  [b]lame [:] shell command", curses.color_pair(4))
