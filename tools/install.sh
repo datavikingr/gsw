@@ -11,7 +11,7 @@ elif command -v pacman &> /dev/null; then
 fi
 
 cd `git rev-parse --show-toplevel`
-sudo cp ./gsw.sh /usr/bin/gsw
+sudo cp ./gsw /usr/bin/gsw
 echo
 echo "Global installation complete! Thanks for picking gsw!"
 exit 0
