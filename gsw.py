@@ -59,7 +59,7 @@ def draw_main(stdscr, repo_path, log_count, status_pos):
     stdscr.attroff(curses.color_pair(7))
 
     # Sidebar
-    tree_output = run_cmd("tree -L 2 --dirsfirst --noreport --gitignore")
+    tree_output = run_cmd("tree -L 2 --dirsfirst --noreport --gitignore --filelimit 16")
     tree_lines = tree_output.splitlines()
     tree_height = height - 2
     draw_box(stdscr, 1, tree_height, sidebar_width, 0, "Repo Tree")

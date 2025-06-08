@@ -1,0 +1,24 @@
+Version bumped to 3.3.0
+Changelog message: === Building PyInstaller binary ===
+37 INFO: PyInstaller: 6.14.0, contrib hooks: 2025.4
+37 INFO: Python: 3.13.3
+38 INFO: Platform: Linux-6.14.8-200.nobara.fc42.x86_64-x86_64-with-glibc2.41
+38 INFO: Python environment: /home/datavikingr/code/gsw/.venv
+38 INFO: wrote /home/datavikingr/code/gsw/gsw.spec
+38 INFO: Module search paths (PYTHONPATH):
+['/usr/lib64/python313.zip',
+ '/usr/lib64/python3.13',
+ '/usr/lib64/python3.13/lib-dynload',
+ '/home/datavikingr/code/gsw/.venv/lib64/python3.13/site-packages',
+ '/home/datavikingr/code/gsw/.venv/lib/python3.13/site-packages',
+ '/home/datavikingr/code/gsw/.venv/lib64/python3.13/site-packages/setuptools/_vendor',
+ '/home/datavikingr/code/gsw']
+118 INFO: checking Analysis
+123 INFO: checking PYZ
+128 INFO: checking PKG
+128 INFO: Bootloader /home/datavikingr/code/gsw/.venv/lib64/python3.13/site-packages/PyInstaller/bootloader/Linux-64bit-intel/run
+128 INFO: checking EXE
+128 INFO: Build complete! The results are available in: /home/datavikingr/code/gsw/dist
+Build complete! Thanks for maintaining gsw!
+🎉 All builds complete! Distributables available in dist/
+Dumping this run's logs to git-tracked file: logs/most_recent.log.

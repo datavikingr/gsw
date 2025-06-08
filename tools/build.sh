@@ -49,9 +49,6 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     cp ./dist/gsw ./gsw
     ARCHIVE_NAME="$APP_NAME.$NEW_VERSION"
     cp ./gsw "./archive_builds/$ARCHIVE_NAME"
-    if [[ -n "$VIRTUAL_ENV" ]]; then
-      deactivate
-    fi
     echo "Build complete! Thanks for maintaining gsw!"
     echo "🎉 All builds complete! Distributables available in dist/"
     echo "Dumping this run's logs to git-tracked file: logs/most_recent.log."

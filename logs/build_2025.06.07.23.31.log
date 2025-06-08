@@ -1,0 +1,51 @@
+=== Building PyInstaller binary ===
+36 INFO: PyInstaller: 6.14.0, contrib hooks: 2025.4
+36 INFO: Python: 3.13.3
+37 INFO: Platform: Linux-6.14.8-200.nobara.fc42.x86_64-x86_64-with-glibc2.41
+37 INFO: Python environment: /home/datavikingr/code/gsw/.venv
+37 INFO: wrote /home/datavikingr/code/gsw/gsw.spec
+37 INFO: Module search paths (PYTHONPATH):
+['/usr/lib64/python313.zip',
+ '/usr/lib64/python3.13',
+ '/usr/lib64/python3.13/lib-dynload',
+ '/home/datavikingr/code/gsw/.venv/lib64/python3.13/site-packages',
+ '/home/datavikingr/code/gsw/.venv/lib/python3.13/site-packages',
+ '/home/datavikingr/code/gsw/.venv/lib64/python3.13/site-packages/setuptools/_vendor',
+ '/home/datavikingr/code/gsw']
+119 INFO: checking Analysis
+121 INFO: Building because /home/datavikingr/code/gsw/gsw.py changed
+121 INFO: Running Analysis Analysis-00.toc
+121 INFO: Target bytecode optimization level: 0
+121 INFO: Initializing module dependency graph...
+121 INFO: Initializing module graph hook caches...
+125 INFO: Analyzing modules for base_library.zip ...
+535 INFO: Processing standard module hook 'hook-heapq.py' from '/home/datavikingr/code/gsw/.venv/lib64/python3.13/site-packages/PyInstaller/hooks'
+589 INFO: Processing standard module hook 'hook-encodings.py' from '/home/datavikingr/code/gsw/.venv/lib64/python3.13/site-packages/PyInstaller/hooks'
+1655 INFO: Processing standard module hook 'hook-pickle.py' from '/home/datavikingr/code/gsw/.venv/lib64/python3.13/site-packages/PyInstaller/hooks'
+2324 INFO: Caching module dependency graph...
+2343 INFO: Looking for Python shared library...
+2346 INFO: Using Python shared library: /lib64/libpython3.13.so.1.0
+2346 INFO: Analyzing /home/datavikingr/code/gsw/gsw.py
+2362 INFO: Processing module hooks (post-graph stage)...
+2364 INFO: Performing binary vs. data reclassification (1 entries)
+2368 INFO: Looking for ctypes DLLs
+2371 INFO: Analyzing run-time hooks ...
+2371 INFO: Including run-time hook 'pyi_rth_inspect.py' from '/home/datavikingr/code/gsw/.venv/lib64/python3.13/site-packages/PyInstaller/hooks/rthooks'
+2374 INFO: Creating base_library.zip...
+2390 INFO: Looking for dynamic libraries
+2518 INFO: Warnings written to /home/datavikingr/code/gsw/build/gsw/warn-gsw.txt
+2522 INFO: Graph cross-reference written to /home/datavikingr/code/gsw/build/gsw/xref-gsw.html
+2527 INFO: checking PYZ
+2531 INFO: checking PKG
+2531 INFO: Building because toc changed
+2531 INFO: Building PKG (CArchive) gsw.pkg
+3103 INFO: Building PKG (CArchive) gsw.pkg completed successfully.
+3103 INFO: Bootloader /home/datavikingr/code/gsw/.venv/lib64/python3.13/site-packages/PyInstaller/bootloader/Linux-64bit-intel/run
+3103 INFO: checking EXE
+3104 INFO: Building because toc changed
+3104 INFO: Building EXE from EXE-00.toc
+3104 INFO: Copying bootloader EXE to /home/datavikingr/code/gsw/dist/gsw
+3104 INFO: Appending PKG archive to custom ELF section in EXE
+3120 INFO: Building EXE from EXE-00.toc completed successfully.
+3120 INFO: Build complete! The results are available in: /home/datavikingr/code/gsw/dist
+tools/build.sh: line 53: deactivate: command not found
