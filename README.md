@@ -2,7 +2,7 @@
 
 gsw is a fully featured tui-based HUD for your git repos while you code. Think of it as similar to top/htop for git repo management. 
 
-![image](./gsw_screencap.png)
+![image](./assets/gsw_screencap.png)
 
 ## Features:
 - install.sh handles dependancies (git, tree) for you, and copies the gsw binary into /usr/bin/
