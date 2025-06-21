@@ -10,8 +10,17 @@ import os
 import time
 from datetime import datetime
 
-def run_cmd(cmd):
-    return subprocess.run(cmd, shell=True, capture_output=True, text=True).stdout.strip()
+# def run_cmd(cmd):
+    #return subprocess.run(cmd, shell=True, capture_output=True, text=True).stdout.strip()
+
+def run_cmd(cmd, show_output=False, stdscr=None, title="Command Output"):
+    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    if show_output and stdscr is not None:
+        lines = ["$ " + cmd, "", "STDOUT:"] + result.stdout.splitlines()
+        if result.stderr.strip():
+            lines += ["", "STDERR:"] + result.stderr.splitlines()
+        show_pager(stdscr, title, lines)
+    return result.stdout.strip()
 
 def init_colors():
     curses.start_color()
@@ -267,7 +276,7 @@ def main(stdscr, args):
         elif key == 'h':
             remote = prompt(stdscr, "Remote [origin]: ") or "origin"
             branch = prompt(stdscr, "Branch [main]: ") or "main"
-            run_cmd(f"git push {remote} {branch}")
+            run_cmd(f"git push {remote} {branch}", show_output=True, stdscr=stdscr, title=f"Push {branch}")
         elif key == 'r':
             file = prompt(stdscr, "File to remove: ")
             if file:
