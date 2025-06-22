@@ -42,9 +42,9 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     #building
     echo "=== Building PyInstaller binary ==="
     cd `git rev-parse --show-toplevel`
-    if [[ -z "$VIRTUAL_ENV" ]]; then
-      source .venv/bin/activate
-    fi
+    #if [[ -z "$VIRTUAL_ENV" ]]; then
+    #  source .venv/bin/activate
+    #fi
     pyinstaller --onefile --noconfirm --console --name=gsw gsw.py
     cp ./dist/gsw ./gsw
     ARCHIVE_NAME="$APP_NAME.$NEW_VERSION"

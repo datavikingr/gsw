@@ -1,0 +1,2 @@
+=== Building PyInstaller binary ===
+tools/build.sh: line 46: .venv/bin/activate: No such file or directory
