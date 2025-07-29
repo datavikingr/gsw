@@ -83,7 +83,6 @@ def draw_main(stdscr, repo_path, log_count, status_pos):
     status_box_height = height - log_box_height - menu_height - 2
 
     # Git logs box up at the top
-    
     draw_box(stdscr, 1, log_box_height, main_width, main_start_x, "Logs")
     log_output = run_cmd(f"git log --graph -n {log_count} --pretty=format:'<%an> - %s (%cr)' --abbrev-commit")
     for idx, line in enumerate(log_output.splitlines()):
