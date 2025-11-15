@@ -33,8 +33,13 @@ def init_colors():
     curses.init_pair(6, curses.COLOR_MAGENTA, -1)
     curses.init_pair(7, curses.COLOR_WHITE, -1)
     curses.init_pair(8, curses.COLOR_BLACK, curses.COLOR_WHITE)
-    curses.init_color(9,350,350,350)
-    curses.init_pair(10, 9, -1)
+    # Safely attempt extended color
+    try:
+        curses.init_color(9, 350, 350, 350)
+        curses.init_pair(10, 9, -1)
+    except curses.error:
+        # tmux or terminal doesn't support init_color()
+        curses.init_pair(10, curses.COLOR_WHITE, -1)
 
 def draw_box(stdscr, y, h, w, x=0, label=""):
     stdscr.attron(curses.color_pair(7))
