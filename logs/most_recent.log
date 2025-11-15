@@ -75,3 +75,59 @@ Dumping this run's logs to git-tracked file: logs/most_recent.log.
 Build complete! Thanks for maintaining gsw!
 🎉 All builds complete! Distributables available in dist/
 Dumping this run's logs to git-tracked file: logs/most_recent.log.
+=== Building PyInstaller binary ===
+383 INFO: PyInstaller: 6.16.0, contrib hooks: 2025.9
+385 INFO: Python: 3.13.7
+390 INFO: Platform: Linux-6.16.12-hardened1-1-hardened-x86_64-with-glibc2.42
+391 INFO: Python environment: /home/datavikingr/.local/share/pipx/venvs/pyinstaller
+392 INFO: wrote /home/datavikingr/code/gsw/gsw.spec
+398 INFO: Module search paths (PYTHONPATH):
+['/usr/lib/python313.zip',
+ '/usr/lib/python3.13',
+ '/usr/lib/python3.13/lib-dynload',
+ '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages',
+ '/home/datavikingr/.local/share/pipx/shared/lib/python3.13/site-packages',
+ '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/setuptools/_vendor',
+ '/home/datavikingr/code/gsw']
+1190 INFO: checking Analysis
+1264 INFO: Building because hookspath changed
+1264 INFO: Looking for Python shared library...
+1291 INFO: Using Python shared library: /usr/lib/libpython3.13.so.1.0
+1291 INFO: Running Analysis Analysis-00.toc
+1291 INFO: Target bytecode optimization level: 0
+1291 INFO: Initializing module dependency graph...
+1311 INFO: Initializing module graph hook caches...
+1361 INFO: Analyzing modules for base_library.zip ...
+7272 INFO: Processing standard module hook 'hook-encodings.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks'
+14710 INFO: Processing standard module hook 'hook-pickle.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks'
+24019 INFO: Processing standard module hook 'hook-heapq.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks'
+27046 INFO: Caching module dependency graph...
+27300 INFO: Analyzing /home/datavikingr/code/gsw/gsw.py
+27474 INFO: Processing module hooks (post-graph stage)...
+27499 INFO: Performing binary vs. data reclassification (1 entries)
+27563 INFO: Looking for ctypes DLLs
+27588 INFO: Analyzing run-time hooks ...
+27592 INFO: Including run-time hook 'pyi_rth_inspect.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks/rthooks'
+27620 INFO: Creating base_library.zip...
+27710 INFO: Looking for dynamic libraries
+28772 INFO: Warnings written to /home/datavikingr/code/gsw/build/gsw/warn-gsw.txt
+28841 INFO: Graph cross-reference written to /home/datavikingr/code/gsw/build/gsw/xref-gsw.html
+28896 INFO: checking PYZ
+28902 INFO: Building because /usr/lib/python3.13/__future__.py changed
+28902 INFO: Building PYZ (ZlibArchive) /home/datavikingr/code/gsw/build/gsw/PYZ-00.pyz
+29346 INFO: Building PYZ (ZlibArchive) /home/datavikingr/code/gsw/build/gsw/PYZ-00.pyz completed successfully.
+29384 INFO: checking PKG
+29430 INFO: Building because toc changed
+29430 INFO: Building PKG (CArchive) gsw.pkg
+35378 INFO: Building PKG (CArchive) gsw.pkg completed successfully.
+35562 INFO: Bootloader /home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/bootloader/Linux-64bit-intel/run
+35562 INFO: checking EXE
+35810 INFO: Building because toc changed
+35810 INFO: Building EXE from EXE-00.toc
+35810 INFO: Copying bootloader EXE to /home/datavikingr/code/gsw/dist/gsw
+35811 INFO: Appending PKG archive to custom ELF section in EXE
+37604 INFO: Building EXE from EXE-00.toc completed successfully.
+37610 INFO: Build complete! The results are available in: /home/datavikingr/code/gsw/dist
+Build complete! Thanks for maintaining gsw!
+🎉 All builds complete! Distributables available in dist/
+Dumping this run's logs to git-tracked file: logs/most_recent.log.

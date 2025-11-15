@@ -1,0 +1,3 @@
+=== Building PyInstaller binary ===
+fatal: not a git repository (or any of the parent directories): .git
+./build.sh: line 48: pyinstaller: command not found

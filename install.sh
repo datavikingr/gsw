@@ -6,11 +6,11 @@ install_deps() {
     # Whatever distro-family you're on, I've got you. 
     # Submit a PR for your own distro's repos. eg, nala, yay, nix, brew, pacstall, chocolately, whatever. 
     # Please include package-names.
-    if command -v dnf &> /dev/null; then
+    if type -p  dnf &> /dev/null; then
         sudo dnf install tree git
-    elif command -v apt &> /dev/null; then
+    elif type -p apt &> /dev/null; then
         sudo apt install tree git
-    elif command -v pacman &> /dev/null; then
+    elif type -p pacman &> /dev/null; then
         sudo pacman -S tree git
     fi
 }
@@ -25,6 +25,9 @@ install_binary(){
 # NOT if it is being sourced by another script.
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     install_deps
+    if [ -f "/usr/bin/gsw" ]; then
+        sudo rm /usr/bin/gsw
+    fi
     install_binary
     exit 0
 fi
