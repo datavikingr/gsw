@@ -1,0 +1,35 @@
+=== Building PyInstaller binary ===
+386 INFO: PyInstaller: 6.16.0, contrib hooks: 2025.9
+387 INFO: Python: 3.13.7
+393 INFO: Platform: Linux-6.16.12-hardened1-1-hardened-x86_64-with-glibc2.42
+394 INFO: Python environment: /home/datavikingr/.local/share/pipx/venvs/pyinstaller
+395 INFO: wrote /home/datavikingr/code/gsw/gsw.spec
+401 INFO: Module search paths (PYTHONPATH):
+['/usr/lib/python313.zip',
+ '/usr/lib/python3.13',
+ '/usr/lib/python3.13/lib-dynload',
+ '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages',
+ '/home/datavikingr/.local/share/pipx/shared/lib/python3.13/site-packages',
+ '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/setuptools/_vendor',
+ '/home/datavikingr/code/gsw']
+1177 INFO: checking Analysis
+1251 INFO: Building because /home/datavikingr/code/gsw/gsw.py changed
+1251 INFO: Looking for Python shared library...
+1278 INFO: Using Python shared library: /usr/lib/libpython3.13.so.1.0
+1279 INFO: Running Analysis Analysis-00.toc
+1279 INFO: Target bytecode optimization level: 0
+1279 INFO: Initializing module dependency graph...
+1297 INFO: Initializing module graph hook caches...
+1358 INFO: Analyzing modules for base_library.zip ...
+7448 INFO: Processing standard module hook 'hook-encodings.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks'
+18387 INFO: Processing standard module hook 'hook-pickle.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks'
+25040 INFO: Processing standard module hook 'hook-heapq.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks'
+27920 INFO: Caching module dependency graph...
+28173 INFO: Analyzing /home/datavikingr/code/gsw/gsw.py
+
+Syntax error in /home/datavikingr/code/gsw/gsw.py
+  File "/home/datavikingr/code/gsw/gsw.py", line 76
+     tree_output = run_cmd("tree -a -L 2 -I ".git" --dirsfirst --noreport --gitignore --filelimit 35")
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ SyntaxError: invalid syntax. Perhaps you forgot a comma?
+

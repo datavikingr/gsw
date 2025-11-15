@@ -1,0 +1,51 @@
+=== Building PyInstaller binary ===
+342 INFO: PyInstaller: 6.16.0, contrib hooks: 2025.9
+343 INFO: Python: 3.13.7
+349 INFO: Platform: Linux-6.16.12-hardened1-1-hardened-x86_64-with-glibc2.42
+349 INFO: Python environment: /home/datavikingr/.local/share/pipx/venvs/pyinstaller
+350 INFO: wrote /home/datavikingr/code/gsw/gsw.spec
+356 INFO: Module search paths (PYTHONPATH):
+['/usr/lib/python313.zip',
+ '/usr/lib/python3.13',
+ '/usr/lib/python3.13/lib-dynload',
+ '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages',
+ '/home/datavikingr/.local/share/pipx/shared/lib/python3.13/site-packages',
+ '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/setuptools/_vendor',
+ '/home/datavikingr/code/gsw']
+1111 INFO: checking Analysis
+1126 INFO: Building because /home/datavikingr/code/gsw/gsw.py changed
+1126 INFO: Looking for Python shared library...
+1152 INFO: Using Python shared library: /usr/lib/libpython3.13.so.1.0
+1152 INFO: Running Analysis Analysis-00.toc
+1152 INFO: Target bytecode optimization level: 0
+1152 INFO: Initializing module dependency graph...
+1154 INFO: Initializing module graph hook caches...
+1203 INFO: Analyzing modules for base_library.zip ...
+7621 INFO: Processing standard module hook 'hook-encodings.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks'
+18753 INFO: Processing standard module hook 'hook-pickle.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks'
+25214 INFO: Processing standard module hook 'hook-heapq.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks'
+27726 INFO: Caching module dependency graph...
+27979 INFO: Analyzing /home/datavikingr/code/gsw/gsw.py
+28153 INFO: Processing module hooks (post-graph stage)...
+28178 INFO: Performing binary vs. data reclassification (1 entries)
+28200 INFO: Looking for ctypes DLLs
+28225 INFO: Analyzing run-time hooks ...
+28228 INFO: Including run-time hook 'pyi_rth_inspect.py' from '/home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/hooks/rthooks'
+28272 INFO: Creating base_library.zip...
+28361 INFO: Looking for dynamic libraries
+29311 INFO: Warnings written to /home/datavikingr/code/gsw/build/gsw/warn-gsw.txt
+29363 INFO: Graph cross-reference written to /home/datavikingr/code/gsw/build/gsw/xref-gsw.html
+29421 INFO: checking PYZ
+29483 INFO: checking PKG
+29486 INFO: Building because /home/datavikingr/code/gsw/gsw.py changed
+29486 INFO: Building PKG (CArchive) gsw.pkg
+35172 INFO: Building PKG (CArchive) gsw.pkg completed successfully.
+35185 INFO: Bootloader /home/datavikingr/.local/share/pipx/venvs/pyinstaller/lib/python3.13/site-packages/PyInstaller/bootloader/Linux-64bit-intel/run
+35185 INFO: checking EXE
+35188 INFO: Rebuilding EXE-00.toc because mtimes don't match
+35188 INFO: Building EXE from EXE-00.toc
+35193 INFO: Copying bootloader EXE to /home/datavikingr/code/gsw/dist/gsw
+35194 INFO: Appending PKG archive to custom ELF section in EXE
+35281 INFO: Building EXE from EXE-00.toc completed successfully.
+35286 INFO: Build complete! The results are available in: /home/datavikingr/code/gsw/dist
+cp: cannot create regular file './gsw': Text file busy
